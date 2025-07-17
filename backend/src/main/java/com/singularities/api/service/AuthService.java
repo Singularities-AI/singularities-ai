@@ -36,6 +36,9 @@ public class AuthService {
     @Value("classpath:email/SecurityLoginEmail.html")
     private Resource securityLoginEmail;
 
+    @Value("${app.url}")
+    private String appUrl;
+
 
     public UserModel getUserByAuthentication(Authentication authentication) {
         if (authentication.isAuthenticated()) {
@@ -88,10 +91,13 @@ public class AuthService {
 
 
     public void sendEmailWithSecurityCode(String email, String securityCode) {
+        String url = appUrl + "/email-confirmation?email=" + email + "&code=" + securityCode;
+
         try {
             emailService.sendHtmlEmail(email, "Connect to Singularities AI",
                     securityLoginEmail.getContentAsString(StandardCharsets.UTF_8)
-                            .replace("{{code}}", securityCode));
+                            .replace("{{code}}", securityCode)
+                            .replace("{{url}}", url));
 
         } catch (Exception e) {
             log.warn(AN_ERROR_OCCURED, e);

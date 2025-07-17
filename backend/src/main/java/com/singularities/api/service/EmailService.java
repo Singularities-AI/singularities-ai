@@ -33,6 +33,6 @@ public class EmailService {
         message.setFrom(email);
         javaMailSender.send(message);
 
-        log.info("Email " + subject + " sent to : {}", email);
+        log.info("Email " + subject + " sent to : {}", to);
     }
 }

@@ -16,11 +16,15 @@ const authStore = useAuthStore()
 const email = ref<string>('')
 const isSubmitting = ref(false)
 
-onMounted(() => {
+onMounted(async () => {
   const emailParam = route.query.email
+  const codeParam = route.query.code
 
   if (typeof emailParam === 'string')
     email.value = emailParam
+
+  if (typeof codeParam === 'string' && codeParam.length === 10)
+    await onSubmit({ code: codeParam })
 })
 
 const loginFormSchema = toTypedSchema(
