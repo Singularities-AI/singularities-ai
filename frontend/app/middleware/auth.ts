@@ -1,14 +1,11 @@
 export default defineNuxtRouteMiddleware(async (to) => {
   const auth = useAuthStore()
 
-  // redirect user to login if is not log
+  // Redirect user to login if is not log
   if (!auth.isAuthenticated() && to.path !== '/login')
     return navigateTo('/login')
 
-  // Empêcher l'accès à /login pour les utilisateurs déjà authentifiés
-  if (auth.isAuthenticated() && to.path === '/login')
-    return navigateTo('/')
-
-  if (auth.isAuthenticated() && to.path === '/register')
+  // Prevent access to certain routes for already authenticated users
+  if (auth.isAuthenticated() && ['/login', '/email-confirmation'].includes(to.path))
     return navigateTo('/')
 })

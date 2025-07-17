@@ -3,6 +3,7 @@ import AccountForm from '~/components/AccountForm.vue'
 
 definePageMeta({
   layout: 'blank',
+  middleware: 'auth',
 })
 </script>
 

@@ -5,6 +5,7 @@ import type { User } from '~/interfaces/User'
 
 definePageMeta({
   layout: 'blank',
+  middleware: 'auth',
 })
 
 const usersStore = useUsersStore()

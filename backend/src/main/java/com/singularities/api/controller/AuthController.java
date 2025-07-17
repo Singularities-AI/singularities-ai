@@ -47,7 +47,6 @@ public class AuthController {
         return authService.getToken(getTokenRequestDto);
     }
 
-    //TODO ERROR: duplicate key value violates unique constraint "auth_tokens_user_id_key"
     @PostMapping("/generate")
     @ResponseStatus(HttpStatus.OK)
     public void generate(@Valid @RequestBody GenerateTokenRequestDto generateTokenRequestDto) {

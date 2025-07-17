@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
-definePageMeta({ layout: 'blank' })
+definePageMeta({ layout: 'blank', middleware: 'auth' })
 
 const inputMessage = ref('')
 const messages = ref<{ from: 'user' | 'bot', text: string }[]>([])
