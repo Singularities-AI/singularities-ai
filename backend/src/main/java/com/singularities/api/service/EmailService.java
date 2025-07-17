@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -21,6 +22,7 @@ public class EmailService {
     private String email;
 
 
+    @Async
     public void sendHtmlEmail(@NotNull String to, @NotNull String subject, @NotNull String htmlContent) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -30,5 +32,7 @@ public class EmailService {
         helper.setText(htmlContent, true);
         message.setFrom(email);
         javaMailSender.send(message);
+
+        log.info("Email " + subject + " sent to : {}", email);
     }
 }
