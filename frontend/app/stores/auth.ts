@@ -66,7 +66,7 @@ export const useAuthStore = defineStore('auth', {
       const config = useRuntimeConfig()
 
       try {
-        const response = await fetch(`${config.public.apiUrl}/web/auth/me`, {
+        const userData = await useSecureFetch<User>(`${config.public.apiUrl}/web/auth/me`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${cookies.get('token')}`,
@@ -74,24 +74,7 @@ export const useAuthStore = defineStore('auth', {
           },
         })
 
-        if (!response.ok) {
-          let errorMessage = 'An error has occurred. Please try again later.'
-          const contentType = response.headers.get('Content-Type') || ''
-
-          if (contentType.includes('application/json')) {
-            const errorData = await response.json()
-            errorMessage = errorData.message || errorMessage
-          }
-          else {
-            errorMessage = await response.text()
-          }
-
-          throw new Error(errorMessage)
-        }
-
-        // store response
-        const json = await response.json()
-        return { success: true, response: json }
+        return { success: true, response: userData }
       }
       catch (error: any) {
         return { success: false, response: error.message }
