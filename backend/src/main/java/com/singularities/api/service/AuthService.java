@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +36,9 @@ public class AuthService {
     @Value("classpath:email/SecurityLoginEmail.html")
     private Resource securityLoginEmail;
 
+    @Value("${app.url}")
+    private String appUrl;
+
 
     public UserModel getUserByAuthentication(Authentication authentication) {
         if (authentication.isAuthenticated()) {
@@ -53,12 +55,12 @@ public class AuthService {
         //check if the code is correct
         Optional<AuthTokenModel> authToken = authTokenService.getTokenByEmailAndSecurityCode(form.getEmail(), form.getCode());
 
-        if(authToken.isEmpty()) {
+        if (authToken.isEmpty()) {
             throw new SingularitiesAIForbiddenException(String.format(AUTH_CODE_INVALID, form.getCode()));
         }
 
         //check if the code limitation date is valid
-        if(authToken.get().getExpiryDate().isBefore(LocalDateTime.now())) {
+        if (authToken.get().getExpiryDate().isBefore(LocalDateTime.now())) {
             throw new SingularitiesAIForbiddenException(String.format(AUTH_CODE_EXPIRED, form.getCode()));
         }
 
@@ -88,14 +90,14 @@ public class AuthService {
     }
 
 
-    @Async
     public void sendEmailWithSecurityCode(String email, String securityCode) {
+        String url = appUrl + "/email-confirmation?email=" + email + "&code=" + securityCode;
+
         try {
             emailService.sendHtmlEmail(email, "Connect to Singularities AI",
                     securityLoginEmail.getContentAsString(StandardCharsets.UTF_8)
-                            .replace("{{code}}", securityCode));
-
-            log.info("Connection email sent to : {}", email);
+                            .replace("{{code}}", securityCode)
+                            .replace("{{url}}", url));
 
         } catch (Exception e) {
             log.warn(AN_ERROR_OCCURED, e);

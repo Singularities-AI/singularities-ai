@@ -1,6 +1,7 @@
 package com.singularities.api.filter;
 
 import com.singularities.api.data.entity.UserModel;
+import com.singularities.api.exception.SingularitiesAIForbiddenException;
 import com.singularities.api.service.AuthTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -48,7 +49,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            logger.error(USER_AUTHENTICATION, e);
+            log.error(USER_AUTHENTICATION, e);
+            throw new SingularitiesAIForbiddenException(USER_AUTHENTICATION);
         }
 
         filterChain.doFilter(request, response);

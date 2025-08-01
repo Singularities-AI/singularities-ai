@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Header from '~/components/Header.vue'
 
-definePageMeta({ layout: 'blank' })
+definePageMeta({ layout: 'blank', middleware: 'auth' })
 
 const categories = [
   {

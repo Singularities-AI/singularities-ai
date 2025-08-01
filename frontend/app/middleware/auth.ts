@@ -5,10 +5,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (!auth.isAuthenticated() && to.path !== '/login')
     return navigateTo('/login')
 
-  // Empêcher l'accès à /login pour les utilisateurs déjà authentifiés
-  if (auth.isAuthenticated() && to.path === '/login')
+  // prevent access to certain routes for already authenticated users
+  if (auth.isAuthenticated() && ['/login', '/email-confirmation'].includes(to.path))
     return navigateTo('/')
 
-  if (auth.isAuthenticated() && to.path === '/register')
+  // admin pages
+  if (auth.isAuthenticated() && ['/admin'].includes(to.path) && !auth.isAdmin())
     return navigateTo('/')
 })

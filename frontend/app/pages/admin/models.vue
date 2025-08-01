@@ -4,6 +4,7 @@ import Header from '~/components/Header.vue'
 
 definePageMeta({
   layout: 'blank',
+  middleware: 'auth',
 })
 
 const models = [

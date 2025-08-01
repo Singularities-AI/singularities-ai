@@ -26,7 +26,7 @@ public class ExceptionMessage {
     public static final String MODEL_IS_ALREADY_DOWNLOAD = "Model is already download: %s.";
 
     //AUTH --
-    public static final String USER_AUTHENTICATION = "Cannot set user authentication: {}";
+    public static final String USER_AUTHENTICATION = "Cannot set user authentication";
     public static final String AUTH_FAILURE = "Authentication failed.";
     public static final String AUTH_CODE_INVALID = "Authentication code is invalid: %s.";
     public static final String AUTH_CODE_EXPIRED = "Authentication code is expired: %s.";
