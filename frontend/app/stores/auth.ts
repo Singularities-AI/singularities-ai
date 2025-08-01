@@ -5,7 +5,9 @@ import type { User } from '~/interfaces/User'
 const cookies = new Cookies()
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({}),
+  state: () => ({
+    roles: [] as string[],
+  }),
 
   actions: {
     async generateToken(email: string): Promise<{ success: boolean, message?: string }> {
@@ -55,6 +57,9 @@ export const useAuthStore = defineStore('auth', {
         // put token in cookie
         cookies.set('token', await response.text())
 
+        // load roles
+        this.me()
+
         return { success: true }
       }
       catch (error: any) {
@@ -74,6 +79,7 @@ export const useAuthStore = defineStore('auth', {
           },
         })
 
+        this.roles = userData.roles
         return { success: true, response: userData }
       }
       catch (error: any) {
@@ -88,6 +94,10 @@ export const useAuthStore = defineStore('auth', {
 
     isAuthenticated(): boolean {
       return !!cookies.get('token')
+    },
+
+    isAdmin(): boolean {
+      return this.roles.includes('ROLE_ADMIN')
     },
   },
 })
