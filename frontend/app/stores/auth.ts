@@ -87,6 +87,26 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async update(payload: { context?: string }) {
+      const config = useRuntimeConfig()
+
+      try {
+        const userData = await useSecureFetch<User>(`${config.public.apiUrl}/web/auth/me`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${cookies.get('token')}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        })
+
+        return { success: true, response: userData }
+      }
+      catch (error: any) {
+        return { success: false, response: error.message }
+      }
+    },
+
     logout(): void {
       cookies.remove('token')
       useRouter().push('/login')
