@@ -58,12 +58,13 @@ CREATE TABLE users_profiles
 
 CREATE TABLE models
 (
-    id          UUID    NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name        VARCHAR NOT NULL,
-    code        VARCHAR NOT NULL,
-    is_default  BOOLEAN NOT NULL             DEFAULT FALSE,
-    is_download BOOLEAN NOT NULL             DEFAULT FALSE,
-    description TEXT NULL
+    id             UUID    NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name           VARCHAR NOT NULL,
+    code           VARCHAR NOT NULL,
+    is_default     BOOLEAN NOT NULL             DEFAULT FALSE,
+    is_download    BOOLEAN NOT NULL             DEFAULT FALSE,
+    is_downloading BOOLEAN NOT NULL             DEFAULT FALSE,
+    description    TEXT NULL
 );
 
 CREATE TABLE chats

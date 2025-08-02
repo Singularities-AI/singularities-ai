@@ -29,6 +29,8 @@ public class ModelController {
         return modelService.findAllAvailable().stream().map(modelMapper::toDto).toList();
     }
 
+    //Admin --
+
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
@@ -48,5 +50,12 @@ public class ModelController {
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable UUID uuid) {
         modelService.delete(uuid);
+    }
+
+    @PutMapping("/{uuid}/default")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public void setDefault(@PathVariable UUID uuid) {
+        modelService.setDefault(uuid);
     }
 }
