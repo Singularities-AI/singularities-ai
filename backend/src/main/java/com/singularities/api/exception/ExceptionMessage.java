@@ -25,6 +25,7 @@ public class ExceptionMessage {
     public static final String MODEL_NOT_FOUND = "Model not found: %s.";
     public static final String MODEL_IS_ALREADY_DOWNLOAD = "Model is already download: %s.";
     public static final String MODEL_IS_CURRENTLY_IN_DOWNLOAD = "Model is currently in download: %s.";
+    public static final String MODEL_IS_CURRENTLY_DEFAULT = "Model is currently default: %s.";
     public static final String MODEL_IS_NOT_DOWNLOAD = "Model is not download: %s.";
 
     //AUTH --

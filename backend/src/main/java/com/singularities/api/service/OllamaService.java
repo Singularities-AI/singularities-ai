@@ -20,6 +20,7 @@ public class OllamaService {
 
         //update model row after download
         model.setDownload(true);
+        model.setDownloading(false);
         modelRepository.save(model);
     }
 
@@ -29,6 +30,7 @@ public class OllamaService {
 
         //update model row after delete
         model.setDownload(false);
+        model.setDownloading(false);
         modelRepository.save(model);
     }
 }

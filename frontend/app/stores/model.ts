@@ -44,5 +44,45 @@ export const useModelStore = defineStore('model', {
       }
     },
 
+    async download(id: string): Promise<{ success: boolean, message?: string }> {
+      const config = useRuntimeConfig()
+
+      try {
+        await useSecureFetch(`${config.public.apiUrl}/web/models/${id}/download`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${useCookie('token').value}`,
+            'Content-Type': 'application/json',
+          },
+        })
+
+        await this.list()
+        return { success: true }
+      }
+      catch (error: any) {
+        return { success: false, message: error.message }
+      }
+    },
+
+    async delete(id: string): Promise<{ success: boolean, message?: string }> {
+      const config = useRuntimeConfig()
+
+      try {
+        await useSecureFetch(`${config.public.apiUrl}/web/models/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${useCookie('token').value}`,
+            'Content-Type': 'application/json',
+          },
+        })
+
+        await this.list()
+        return { success: true }
+      }
+      catch (error: any) {
+        return { success: false, message: error.message }
+      }
+    },
+
   },
 })

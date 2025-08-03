@@ -29,6 +29,40 @@ async function setAsDefault(id: string) {
     })
   }
 }
+
+async function download(id: string) {
+  const { success, message } = await modelStore.download(id)
+  if (!success) {
+    toast({
+      title: 'Error',
+      description: message || 'Unable to download this model.',
+      variant: 'destructive',
+    })
+  }
+  else {
+    toast({
+      title: 'Success',
+      description: 'Download started successfully.',
+    })
+  }
+}
+
+async function remove(id: string) {
+  const { success, message } = await modelStore.delete(id)
+  if (!success) {
+    toast({
+      title: 'Error',
+      description: message || 'Unable to delete this model.',
+      variant: 'destructive',
+    })
+  }
+  else {
+    toast({
+      title: 'Deleted',
+      description: 'Model deleted successfully.',
+    })
+  }
+}
 </script>
 
 <template>
@@ -44,7 +78,7 @@ async function setAsDefault(id: string) {
             <h3 class="flex items-center gap-2 font-semibold">
               {{ model.name }}
               <Icon
-                v-if="model.isDownload"
+                v-if="model.download"
                 name="lucide:check-circle"
                 class="size-4 text-green-500"
               />
@@ -52,44 +86,64 @@ async function setAsDefault(id: string) {
             <p class="text-sm text-muted-foreground">
               {{ model.description }}
             </p>
-
-            <div class="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
-              <Icon v-if="model.isDownload" name="lucide:trash-2" class="size-5" />
-
-              <span v-if="model.isDownload">✅ Downloaded</span>
-              <span v-if="model.isDefault" class="text-primary font-semibold">⭐ Default model</span>
-            </div>
           </div>
 
-          <div class="flex flex-col items-end gap-2">
+          <div class="w-[200px] flex flex-col items-end gap-2 text-black">
+            <!-- Download or Delete -->
             <Button
-              v-if="!model.isDownload"
+              v-if="!model.download"
               size="sm"
-              :disabled="model.isDownloading"
+              class="w-full justify-center bg-green-400"
+              @click="download(model.id)"
             >
               <Icon name="lucide:download" class="mr-2 size-5" />
               Download
             </Button>
 
             <Button
-              v-if="model.isDownload"
+              v-else
               size="sm"
               variant="ghost"
-              disabled
+              class="w-full justify-center bg-red-300"
+              @click="remove(model.id)"
             >
               <Icon name="lucide:trash" class="mr-2 size-5" />
               Delete
             </Button>
 
+            <!-- Set as default -->
             <Button
-              v-if="!model.isDefault"
+              v-if="!model.default"
               size="sm"
               variant="outline"
+              class="w-full justify-center"
+              :disabled="!model.download"
               @click="setAsDefault(model.id)"
             >
               <Icon name="lucide:star" class="mr-2 size-5" />
               Set as default
             </Button>
+
+            <!-- Default (tooltip) -->
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <Button
+                  v-if="model.default"
+                  size="sm"
+                  variant="outline"
+                  class="w-full justify-center bg-yellow300"
+                  disabled
+                >
+                  <Icon name="lucide:star" class="mr-2 size-5" />
+                  Default
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent class="bg-black">
+                <p class="text-white">
+                  Select another model to change the default one
+                </p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>
