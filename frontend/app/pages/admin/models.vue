@@ -1,95 +1,98 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Header from '~/components/Header.vue'
+import { onMounted, ref } from 'vue'
+import { useModelStore } from '~/stores/model'
 
 definePageMeta({
-  layout: 'blank',
+  layout: 'admin',
   middleware: 'auth',
 })
 
-const models = [
-  {
-    name: 'Jan-Nano-Gguf',
-    description: 'Jan Nano is a fine-tuned language model built on top of the Qwen3 architecture...',
-    author: 'Menlo',
-    downloads: 19148,
-    size: '2.11GB',
-    variants: [
-      { name: 'Menlo:Jan-nano-gguf:jan-nano-4b-Q3_K_S.gguf', size: '1.76GB' },
-      { name: 'Menlo:Jan-nano-gguf:jan-nano-4b-Q3_K_M.gguf', size: '1.93GB' },
-    ],
-  },
-  {
-    name: 'Intellect-2',
-    description: 'Prime Intellect released INTELLECT-2, a 32 billion parameter large language model...',
-    author: 'PrimeIntellect',
-    downloads: 1665,
-    size: '18.49GB',
-    variants: [],
-  },
-]
+const modelStore = useModelStore()
 
-const showVariants = ref<{ [key: string]: boolean }>({})
+onMounted(async () => {
+  await modelStore.list()
+})
+
+async function setAsDefault(id: string) {
+  const { success, message } = await modelStore.setDefault(id)
+  if (!success) {
+    toast({
+      title: 'Error',
+      description: message || 'Unable to set this model as default.',
+      variant: 'destructive',
+    })
+  }
+  else {
+    toast({
+      title: 'Success',
+      description: 'Model defined as default.',
+    })
+  }
+}
 </script>
 
 <template>
-  <div class="grid h-screen w-full pl-[53px]">
-    <Sidebar />
+  <main class="grid flex-1 gap-4 overflow-auto p-4 lg:grid-cols-2">
+    <div class="relative flex flex-col gap-4">
+      <div
+        v-for="model in modelStore.models"
+        :key="model.id"
+        class="relative flex flex-col border rounded-xl bg-muted/50 p-4"
+      >
+        <div class="flex items-start justify-between">
+          <div>
+            <h3 class="flex items-center gap-2 font-semibold">
+              {{ model.name }}
+              <Icon
+                v-if="model.isDownload"
+                name="lucide:check-circle"
+                class="size-4 text-green-500"
+              />
+            </h3>
+            <p class="text-sm text-muted-foreground">
+              {{ model.description }}
+            </p>
 
-    <div class="flex flex-col">
-      <Header />
+            <div class="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
+              <Icon v-if="model.isDownload" name="lucide:trash-2" class="size-5" />
 
-      <main class="grid flex-1 gap-4 overflow-auto p-4 lg:grid-cols-2">
-        <div class="relative flex flex-col gap-4">
-          <div
-            v-for="model in models"
-            :key="model.name"
-            class="relative flex flex-col border rounded-xl bg-muted/50 p-4"
-          >
-            <div class="flex items-start justify-between">
-              <div>
-                <h3 class="font-semibold">
-                  {{ model.name }}
-                </h3>
-                <p class="text-sm text-muted-foreground">
-                  {{ model.description }}
-                </p>
-                <div class="mt-1 flex gap-3 text-xs text-muted-foreground">
-                  <span>By {{ model.author }}</span>
-                  <span>{{ model.downloads.toLocaleString() }} downloads</span>
-                </div>
-              </div>
-              <div class="flex flex-col items-end gap-2">
-                <Button size="sm">
-                  Download
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  @click="showVariants[model.name] = !showVariants[model.name]"
-                >
-                  {{ showVariants[model.name] ? 'Hide variants' : 'Show variants' }}
-                </Button>
-              </div>
-            </div>
-            <div v-if="showVariants[model.name]" class="mt-2">
-              <div
-                v-for="variant in model.variants"
-                :key="variant.name"
-                class="flex items-center justify-between border-t py-1 text-sm"
-              >
-                <span class="truncate">{{ variant.name }}</span>
-                <div class="flex items-center gap-2">
-                  <span class="text-xs text-muted-foreground">{{ variant.size }}</span>
-                  <Button variant="ghost" size="icon">
-                    <Icon name="lucide:download" class="size-4" />
-                  </Button>
-                </div>
-              </div>
+              <span v-if="model.isDownload">✅ Downloaded</span>
+              <span v-if="model.isDefault" class="text-primary font-semibold">⭐ Default model</span>
             </div>
           </div>
+
+          <div class="flex flex-col items-end gap-2">
+            <Button
+              v-if="!model.isDownload"
+              size="sm"
+              :disabled="model.isDownloading"
+            >
+              <Icon name="lucide:download" class="mr-2 size-5" />
+              Download
+            </Button>
+
+            <Button
+              v-if="model.isDownload"
+              size="sm"
+              variant="ghost"
+              disabled
+            >
+              <Icon name="lucide:trash" class="mr-2 size-5" />
+              Delete
+            </Button>
+
+            <Button
+              v-if="!model.isDefault"
+              size="sm"
+              variant="outline"
+              @click="setAsDefault(model.id)"
+            >
+              <Icon name="lucide:star" class="mr-2 size-5" />
+              Set as default
+            </Button>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
-  </div>
+  </main>
 </template>

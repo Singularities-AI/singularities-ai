@@ -31,7 +31,7 @@ public class ModelController {
 
     //Admin --
 
-    @GetMapping("/")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
     public List<ModelResponseDto> list() {

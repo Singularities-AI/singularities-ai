@@ -48,12 +48,13 @@ public class ModelService {
             throw new SingularitiesAIConflictException(String.format(MODEL_IS_ALREADY_DOWNLOAD, uuid));
         }
 
-        //Run async ollama download
+        //run async ollama download
         ollamaService.pullModel(model);
 
         model.setDownloading(true);
         modelRepository.save(model);
     }
+
 
     @Transactional
     public void delete(UUID uuid) {
@@ -64,6 +65,7 @@ public class ModelService {
         }
 
         if(model.isDownload()) {
+            //run async ollama delete
             ollamaService.deleteModel(model);
         }
     }

@@ -13,6 +13,8 @@ public class ModelResponseDto {
 
     private UUID id;
     private String name;
+    private String description;
+    private boolean isDownloading;
     private boolean isDownload;
     private boolean isDefault;
 }
