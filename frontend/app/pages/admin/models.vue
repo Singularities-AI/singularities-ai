@@ -115,7 +115,7 @@ async function remove(id: string) {
                   v-else
                   size="sm"
                   variant="ghost"
-                  class="w-full justify-center bg-red-300"
+                  class="w-full justify-center bg-red-400"
                   :disabled="model.default"
                   @click="remove(model.id)"
                 >

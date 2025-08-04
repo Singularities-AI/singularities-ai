@@ -34,6 +34,7 @@ public class OllamaService {
                 }).block();
     }
 
+
     @Async
     public void deleteModel(ModelModel model) {
         webClient.method(HttpMethod.DELETE)

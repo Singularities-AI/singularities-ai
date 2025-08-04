@@ -60,7 +60,7 @@ const router = useRouter()
         <TooltipTrigger as-child>
           <Button
             variant="ghost"
-            size="icon" class="mt-auto rounded-lg" aria-label="Configuration" @click="router.push('/admin')"
+            size="icon" class="mt-auto rounded-lg" aria-label="Configuration" @click="router.push('/admin/models')"
           >
             <Icon name="lucide:settings" class="size-5" />
           </Button>
