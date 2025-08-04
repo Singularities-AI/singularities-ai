@@ -89,27 +89,41 @@ async function remove(id: string) {
           </div>
 
           <div class="w-[200px] flex flex-col items-end gap-2 text-black">
-            <!-- Download or Delete -->
-            <Button
-              v-if="!model.download"
-              size="sm"
-              class="w-full justify-center bg-green-400"
-              @click="download(model.id)"
-            >
-              <Icon name="lucide:download" class="mr-2 size-5" />
-              Download
-            </Button>
+            <div class="w-full">
+              <Button
+                v-if="model.downloading"
+                size="sm"
+                class="w-full justify-center bg-muted text-muted-foreground"
+                disabled
+              >
+                <Icon name="lucide:loader-2" class="mr-2 size-5 animate-spin" />
+                Downloading...
+              </Button>
 
-            <Button
-              v-else
-              size="sm"
-              variant="ghost"
-              class="w-full justify-center bg-red-300"
-              @click="remove(model.id)"
-            >
-              <Icon name="lucide:trash" class="mr-2 size-5" />
-              Delete
-            </Button>
+              <template v-else>
+                <Button
+                  v-if="!model.download"
+                  size="sm"
+                  class="w-full justify-center bg-green-400"
+                  @click="download(model.id)"
+                >
+                  <Icon name="lucide:download" class="mr-2 size-5" />
+                  Download
+                </Button>
+
+                <Button
+                  v-else
+                  size="sm"
+                  variant="ghost"
+                  class="w-full justify-center bg-red-300"
+                  :disabled="model.default"
+                  @click="remove(model.id)"
+                >
+                  <Icon name="lucide:trash" class="mr-2 size-5" />
+                  Delete
+                </Button>
+              </template>
+            </div>
 
             <!-- Set as default -->
             <Button
