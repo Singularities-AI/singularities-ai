@@ -8,8 +8,22 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useModelStore } from '~/stores/model'
+import type { Model } from '~/interfaces/Model'
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
+
+const modelStore = useModelStore()
+const availableModels = ref<Model[]>([])
+const selectedModel = ref<string | undefined>(undefined)
+
+onMounted(async () => {
+  availableModels.value = await modelStore.listAvailable()
+
+  const defaultModel = availableModels.value.find(m => m.default)
+  if (defaultModel)
+    selectedModel.value = defaultModel.id
+})
 
 const inputMessage = ref('')
 const messages = ref<{ from: 'user' | 'bot', text: string }[]>([])
@@ -51,7 +65,7 @@ const history = ref([
   { name: 'Bug rapporté hier' },
 ])
 
-function deleteChat(index) {
+function deleteChat(index: number) {
   history.value.splice(index, 1)
 }
 </script>
@@ -112,37 +126,19 @@ function deleteChat(index) {
               </legend>
               <div class="grid gap-3">
                 <Label for="model">Model</Label>
-                <Select>
+                <Select v-model="selectedModel">
                   <SelectTrigger id="model" class="items-start [&_[data-description]]:hidden">
                     <SelectValue placeholder="Select a model" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="genesis">
+                    <SelectItem
+                      v-for="model in availableModels"
+                      :key="model.id"
+                      :value="model.id"
+                    >
                       <div class="flex items-start gap-3 text-muted-foreground">
-                        <Icon name="lucide:rabbit" class="size-5" />
-                        <p>Neural <span class="text-foreground font-medium">Genesis</span></p>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="explorer">
-                      <div class="flex items-start gap-3 text-muted-foreground">
-                        <Icon name="lucide:bird" class="size-5" />
-                        <div class="grid gap-0.5">
-                          <p>Neural <span class="text-foreground font-medium">Explorer</span></p>
-                          <p class="text-xs" data-description>
-                            Performance and speed for efficiency.
-                          </p>
-                        </div>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="quantum">
-                      <div class="flex items-start gap-3 text-muted-foreground">
-                        <Icon name="lucide:turtle" class="size-5" />
-                        <div class="grid gap-0.5">
-                          <p>Neural <span class="text-foreground font-medium">Quantum</span></p>
-                          <p class="text-xs" data-description>
-                            The most powerful model for complex computations.
-                          </p>
-                        </div>
+                        <Icon name="lucide:brain" class="size-5" />
+                        <p>{{ model.name }}</p>
                       </div>
                     </SelectItem>
                   </SelectContent>

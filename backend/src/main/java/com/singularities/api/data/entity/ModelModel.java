@@ -28,6 +28,9 @@ public class ModelModel {
     @Column(name = "is_default", nullable = false)
     private boolean isDefault;
 
+    @Column(name = "is_downloading", nullable = false)
+    private boolean isDownloading;
+
     @Column(name = "is_download", nullable = false)
     private boolean isDownload;
 }

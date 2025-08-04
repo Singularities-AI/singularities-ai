@@ -1,5 +1,6 @@
 package com.singularities.api.controller;
 
+import com.singularities.api.data.entity.ModelModel;
 import com.singularities.api.dto.response.ModelResponseDto;
 import com.singularities.api.mapper.ModelMapper;
 import com.singularities.api.service.ModelService;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,11 +31,15 @@ public class ModelController {
         return modelService.findAllAvailable().stream().map(modelMapper::toDto).toList();
     }
 
-    @GetMapping("/")
+    //Admin --
+
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
     public List<ModelResponseDto> list() {
-        return modelService.findAll().stream().map(modelMapper::toDto).toList();
+        return modelService.findAll().stream()
+                .sorted(Comparator.comparing(ModelModel::getName))
+                .map(modelMapper::toDto).toList();
     }
 
     @PostMapping("/{uuid}/download")
@@ -48,5 +54,12 @@ public class ModelController {
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable UUID uuid) {
         modelService.delete(uuid);
+    }
+
+    @PutMapping("/{uuid}/default")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public void setDefault(@PathVariable UUID uuid) {
+        modelService.setDefault(uuid);
     }
 }
