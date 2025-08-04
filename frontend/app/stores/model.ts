@@ -7,6 +7,21 @@ export const useModelStore = defineStore('model', {
   }),
 
   actions: {
+    async listAvailable(): Promise<Model[]> {
+      const config = useRuntimeConfig()
+      try {
+        return await useSecureFetch<Model[]>(`${config.public.apiUrl}/web/models/availables`, {
+          headers: {
+            'Authorization': `Bearer ${useCookie('token').value}`,
+            'Content-Type': 'application/json',
+          },
+        })
+      }
+      catch (error) {
+        return []
+      }
+    },
+
     async list(): Promise<{ success: boolean, message?: string }> {
       const config = useRuntimeConfig()
 
