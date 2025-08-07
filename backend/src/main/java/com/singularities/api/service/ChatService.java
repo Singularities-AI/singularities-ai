@@ -3,6 +3,7 @@ package com.singularities.api.service;
 import com.singularities.api.data.constant.EMessageRole;
 import com.singularities.api.data.entity.ChatModel;
 import com.singularities.api.data.entity.MessageModel;
+import com.singularities.api.data.entity.ModelModel;
 import com.singularities.api.data.entity.UserModel;
 import com.singularities.api.data.repository.ChatRepository;
 import com.singularities.api.dto.request.ChatUpdateRequestDto;
@@ -11,9 +12,6 @@ import com.singularities.api.exception.SingularitiesAIForbiddenException;
 import com.singularities.api.exception.SingularitiesAINotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.data.domain.Page;
@@ -22,8 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.singularities.api.exception.ExceptionMessage.*;
 
@@ -33,6 +31,7 @@ import static com.singularities.api.exception.ExceptionMessage.*;
 public class ChatService {
 
     private final ModelService modelService;
+    private final PromptService promptService;
     private final MessageService messageService;
     private final ChatRepository chatRepository;
 
@@ -40,11 +39,13 @@ public class ChatService {
     private final org.springframework.ai.chat.model.ChatModel chatModelAI;
 
 
-    private ChatModel create(UserModel user, String firstMessage) {
+    private ChatModel create(UserModel user, String firstMessage, ModelModel model, String context) {
         ChatModel chatModel = new ChatModel();
         chatModel.setCreationDate(LocalDateTime.now());
         chatModel.setUser(user);
-        chatModel.setTitle(firstMessage.substring(5));
+        chatModel.setModel(model);
+        chatModel.setContext(context);
+        chatModel.setTitle(firstMessage.length() > 5 ? firstMessage.substring(0, 5) : firstMessage);
         return chatRepository.save(chatModel);
     }
 
@@ -53,7 +54,8 @@ public class ChatService {
         ChatModel chat = chatRepository.findById(uuid).orElseThrow(
                 () -> new SingularitiesAINotFoundException(String.format(CHAT_NOT_FOUND, uuid))
         );
-        if(!chat.getUser().equals(user)) {
+
+        if (!chat.getUser().equals(user)) {
             throw new SingularitiesAIForbiddenException(String.format(CHAT_UPDATE_FORBIDDEN, uuid));
         }
 
@@ -72,7 +74,7 @@ public class ChatService {
         ChatModel chat = chatRepository.findById(uuid).orElseThrow(
                 () -> new SingularitiesAINotFoundException(String.format(CHAT_NOT_FOUND, uuid))
         );
-        if(!chat.getUser().equals(user)) {
+        if (!chat.getUser().equals(user)) {
             throw new SingularitiesAIForbiddenException(String.format(CHAT_DELETE_FORBIDDEN, uuid));
         }
         chatRepository.deleteById(uuid);
@@ -83,7 +85,7 @@ public class ChatService {
         ChatModel chatModel = chatRepository.findById(uuid).orElseThrow(
                 () -> new SingularitiesAINotFoundException(String.format(CHAT_NOT_FOUND, uuid))
         );
-        if(!chatModel.getUser().equals(user)) {
+        if (!chatModel.getUser().equals(user)) {
             throw new SingularitiesAIForbiddenException(String.format(CHAT_ACCESS_FORBIDDEN, uuid));
         }
         return chatModel.getMessages();
@@ -91,33 +93,46 @@ public class ChatService {
 
 
     public MessageModel addMessageToChat(UserModel user, MessageRequestDto form) {
+        ModelModel model = modelService.findByUUID(form.getModelUUID());
+
         ChatModel chatModel;
-        if(form.getChatUUID() == null) {
+        if (form.getChatUUID() == null) {
             //create new chat
-            chatModel = create(user, form.getMessage());
+            chatModel = create(user, form.getContent(), model, form.getContext());
         } else {
             chatModel = chatRepository.findById(form.getChatUUID()).orElseThrow(
                     () -> new SingularitiesAINotFoundException(String.format(CHAT_NOT_FOUND, form.getChatUUID()))
             );
+
+            chatModel = updateChatConfigurationIfChanged(chatModel, model, form.getContext());
         }
 
         //add user message
-        messageService.create(chatModel, EMessageRole.USER, form.getMessage());
+        messageService.create(chatModel, EMessageRole.USER, form.getContent());
 
-        //gen agent response with chat histories
-        List<Message> messages = chatModel.getMessages().stream()
-                .map(msg -> {
-                    return switch (msg.getRole()) {
-                        case "USER" -> new UserMessage(msg.getContent());
-                        case "AGENT" -> new AssistantMessage(msg.getContent());
-                        default -> throw new IllegalArgumentException("Unknown message role: " + msg.getRole());
-                    };
-                })
-                .collect(Collectors.toList());
-
-        Prompt prompt = new Prompt(chatModel.getContext() + messages); //add context to all request
+        Prompt prompt = promptService.createPromptWithContextsAndHistories(chatModel, user.getContext());
         ChatResponse aiResponse = chatModelAI.call(prompt);
-        String aiMessageContent = aiResponse.getResult().getOutput().getText();
-        return messageService.create(chatModel, EMessageRole.AGENT, aiMessageContent);
+        return messageService.create(chatModel, EMessageRole.AGENT, aiResponse.getResult().getOutput().getText());
+    }
+
+
+    private ChatModel updateChatConfigurationIfChanged(ChatModel chatModel, ModelModel newModel, String newContext) {
+        boolean hasChanged = false;
+
+        if (!Objects.equals(chatModel.getModel(), newModel)) {
+            chatModel.setModel(newModel);
+            hasChanged = true;
+        }
+
+        if (!Objects.equals(chatModel.getContext(), newContext)) {
+            chatModel.setContext(newContext);
+            hasChanged = true;
+        }
+
+        if (hasChanged) {
+            chatModel = chatRepository.save(chatModel);
+        }
+
+        return chatModel;
     }
 }

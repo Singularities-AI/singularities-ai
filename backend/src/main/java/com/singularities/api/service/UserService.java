@@ -1,13 +1,12 @@
 package com.singularities.api.service;
 
+import com.singularities.api.data.constant.EMessageRole;
 import com.singularities.api.data.constant.ERole;
-import com.singularities.api.data.entity.RoleModel;
-import com.singularities.api.data.entity.UserModel;
-import com.singularities.api.data.entity.UserRoleModel;
-import com.singularities.api.data.entity.UserRoleModelCompositeId;
+import com.singularities.api.data.entity.*;
 import com.singularities.api.data.repository.RoleRepository;
 import com.singularities.api.data.repository.UserRepository;
 import com.singularities.api.data.repository.UserRoleRepository;
+import com.singularities.api.dto.request.MessageRequestDto;
 import com.singularities.api.dto.request.UserUpdateRequestDto;
 import com.singularities.api.exception.SingularitiesAINotFoundException;
 import jakarta.transaction.Transactional;
@@ -33,6 +32,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
+
+    private final MessageService messageService;
+    private final ChatService chatService;
 
 
     public UserModel findByUUID(String uuid) {
@@ -68,6 +70,11 @@ public class UserService {
         for (RoleModel role : roleModels) {
             userRoleRepository.save(new UserRoleModel(new UserRoleModelCompositeId(toSave, role)));
         }
+
+        //TODO create first onboarding chat
+        //MessageModel firstMessage = chatService.addMessageToChat(user, new MessageRequestDto(null, ""));
+        //messageService.create(firstMessage.getChat(), EMessageRole.AGENT, "test");
+
         return user;
     }
 

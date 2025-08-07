@@ -98,6 +98,5 @@ export const useModelStore = defineStore('model', {
         return { success: false, message: error.message }
       }
     },
-
   },
 })
