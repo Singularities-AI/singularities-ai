@@ -12,8 +12,11 @@ import com.singularities.api.exception.SingularitiesAIForbiddenException;
 import com.singularities.api.exception.SingularitiesAINotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -108,7 +111,8 @@ public class ChatService {
         }
 
         //add user message
-        messageService.create(chatModel, EMessageRole.USER, form.getContent());
+        MessageModel userMessage = messageService.create(chatModel, EMessageRole.USER, form.getContent());
+        chatModel.getMessages().add(userMessage);
 
         Prompt prompt = promptService.createPromptWithContextsAndHistories(chatModel, user.getContext());
         ChatResponse aiResponse = chatModelAI.call(prompt);
