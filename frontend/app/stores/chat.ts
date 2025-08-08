@@ -47,7 +47,7 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
-  async function sendMessage(chatId: string | null, content: string, modelUUID: string, context: string | null): Promise<MessageResponse | null> {
+  async function sendMessage(chatUUID: string | null, content: string, modelUUID: string, context: string | null): Promise<MessageResponse | null> {
     const config = useRuntimeConfig()
 
     try {
@@ -55,7 +55,7 @@ export const useChatStore = defineStore('chat', () => {
         `${config.public.apiUrl}/web/chats/messages`,
         {
           method: 'POST',
-          body: JSON.stringify({ chatId, content, modelUUID, context }),
+          body: JSON.stringify({ chatUUID, content, modelUUID, context }),
           headers: {
             'Authorization': `Bearer ${useCookie('token').value}`,
             'Content-Type': 'application/json',

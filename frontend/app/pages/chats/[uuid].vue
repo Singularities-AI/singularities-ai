@@ -19,6 +19,7 @@ const context = ref<string>('')
 const selectedChatId = ref<string | null>(null)
 const inputMessage = ref('')
 const messages = ref<Message[]>([])
+const loading = ref<boolean>(false)
 
 interface Message {
   from: 'USER' | 'AGENT' | 'ERROR'
@@ -28,18 +29,22 @@ interface Message {
 
 onMounted(async () => {
   await Promise.all([
+    // load models available
     modelStore.listAvailable().then((result) => {
       availableModels.value = result
       const defaultModel = availableModels.value.find(m => m.default)
       if (defaultModel)
         selectedModel.value = defaultModel.id
     }),
+
+    // load chats histories
     chatStore.list(),
   ])
 
+  // load chat if uuid is present in url
   const route = useRoute()
   const chatUUID = route.params.uuid as string | undefined
-  if (chatUUID) {
+  if (chatUUID && chatUUID !== 'new') {
     selectedChatId.value = chatUUID
     const previousMessages = await chatStore.listMessages(chatUUID)
 
@@ -61,21 +66,23 @@ async function sendMessage() {
   messages.value.push({ from: 'USER', text: userText })
 
   const retry = () => {
-    // Deletes the last error message so it doesn't get duplicated
+    // deletes the last error message so it doesn't get duplicated
     messages.value = messages.value.filter(msg => msg.from !== 'ERROR' || msg.text !== userText)
     inputMessage.value = userText
     sendMessage()
   }
 
   try {
+    loading.value = true
     const response = await chatStore.sendMessage(
       selectedChatId.value,
       userText,
       selectedModel.value,
       context.value,
     )
+    loading.value = false
 
-    if (response) {
+    if (response && response.content) {
       messages.value.push({ from: 'AGENT', text: response.content })
 
       if (!selectedChatId.value) {
@@ -85,7 +92,7 @@ async function sendMessage() {
       }
     }
     else {
-      // In case of a handled error an error message is displayed.
+      // in case of a handled error an error message is displayed.
       messages.value.push({ from: 'ERROR', text: userText, retry })
     }
   }
@@ -125,7 +132,7 @@ function newChat() {
           <!-- chats -->
           <div class="flex-1 overflow-auto pb-4">
             <fieldset class="h-full flex flex-col gap-4 border rounded-lg p-4">
-              <legend class="text-sm font-medium -ml-1">
+              <legend class="ml-1 text-sm font-medium">
                 Chats
               </legend>
 
@@ -222,13 +229,9 @@ function newChat() {
         </div>
 
         <!-- chat box -->
-        <div class="relative h-full min-h-[50vh] flex flex-col rounded-xl bg-muted/50 p-4">
-          <Badge variant="outline" class="absolute right-3 top-3 pl-3 pr-3">
-            Output
-          </Badge>
-
+        <div class="relative h-full min-h-[50vh] flex flex-col border rounded-xl p-4">
           <!-- messages -->
-          <div class="mb-4 max-h-[calc(100vh-200px)] flex-1 overflow-x-hidden overflow-y-auto scroll-smooth space-y-2">
+          <div class="mb-4 max-h-[calc(100vh-200px)] flex-1 overflow-x-hidden overflow-y-auto scroll-smooth space-y-4">
             <div
               v-for="(msg, idx) in messages"
               :key="idx"
@@ -256,6 +259,16 @@ function newChat() {
                   {{ msg.text }}
                 </div>
               </template>
+            </div>
+
+            <div v-if="loading === true" class="w-full rounded-lg bg-muted p-2">
+              <div class="mx-3 w-full flex text-sm">
+                <svg class="mr-2 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Generating your response...
+              </div>
             </div>
           </div>
 

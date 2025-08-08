@@ -22,7 +22,6 @@ public class PromptService {
 
     public Prompt createPromptWithContextsAndHistories(ChatModel chat, String globalContext) {
         List<Message> messages = new ArrayList<>();
-        messages.add(new SystemMessage("Always respond in a structured manner using markdown."));
 
         if (globalContext != null && !globalContext.trim().isEmpty()) {
             messages.add(new SystemMessage("User context : " + globalContext));

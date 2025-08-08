@@ -1,6 +1,5 @@
 package com.singularities.api.service;
 
-
 import com.singularities.api.data.entity.AuthTokenModel;
 import com.singularities.api.data.entity.UserModel;
 import com.singularities.api.data.repository.UserRepository;
