@@ -34,9 +34,6 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
 
-    private final MessageService messageService;
-    private final ChatService chatService;
-
 
     public UserModel findByUUID(String uuid) {
        return userRepository.findById(UUID.fromString(uuid)).orElseThrow(
@@ -71,10 +68,6 @@ public class UserService {
         for (RoleModel role : roleModels) {
             userRoleRepository.save(new UserRoleModel(new UserRoleModelCompositeId(toSave, role)));
         }
-
-        //TODO create first onboarding chat
-        //MessageModel firstMessage = chatService.addMessageToChat(user, new MessageRequestDto(null, ""));
-        //messageService.create(firstMessage.getChat(), EMessageRole.AGENT, "test");
 
         return user;
     }

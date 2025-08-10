@@ -40,7 +40,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/v3/api-docs/**", "/web/auth/**")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/web/auth/**")
                         .permitAll().anyRequest().authenticated());
         http.cors(cors -> corsConfigurationSource());
         http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
