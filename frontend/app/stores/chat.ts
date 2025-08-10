@@ -25,9 +25,7 @@ export const useChatStore = defineStore('chat', () => {
       chats.value = response.content
       page.value = response
     }
-    catch (e) {
-      console.error('Failed to fetch chat history:', e)
-    }
+    catch (e) {}
   }
 
   async function remove(uuid: string) {
@@ -42,9 +40,7 @@ export const useChatStore = defineStore('chat', () => {
       })
       await list()
     }
-    catch (e) {
-      console.error(`Failed to delete chat ${uuid}:`, e)
-    }
+    catch (e) {}
   }
 
   async function sendMessage(chatUUID: string | null, content: string, modelUUID: string, context: string | null): Promise<MessageResponse | null> {
@@ -66,7 +62,6 @@ export const useChatStore = defineStore('chat', () => {
       return response
     }
     catch (e) {
-      console.error('Failed to send message:', e)
       return null
     }
   }
@@ -88,7 +83,6 @@ export const useChatStore = defineStore('chat', () => {
       return response
     }
     catch (e) {
-      console.error(`Failed to fetch messages for chat ${uuid}:`, e)
       return []
     }
   }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const router = useRouter()
+const auth = useAuthStore()
 </script>
 
 <template>
@@ -56,7 +57,7 @@ const router = useRouter()
         </TooltipContent>
       </Tooltip>
 
-      <Tooltip>
+      <Tooltip v-if="auth.isAdmin()">
         <TooltipTrigger as-child>
           <Button
             variant="ghost"

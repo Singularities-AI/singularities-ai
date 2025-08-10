@@ -26,8 +26,8 @@ public class WebSecurityConfig {
 
     private final AuthTokenFilter authenticationJwtTokenFilter;
 
-    @Value("${singularities.app.allowedOrigins}")
-    List<String> allowedOrigins;
+    @Value("${app.url.client}")
+    List<String> allowedClientsUrl;
 
 
     @Bean
@@ -51,7 +51,7 @@ public class WebSecurityConfig {
     @Bean
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedOrigins(allowedClientsUrl);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

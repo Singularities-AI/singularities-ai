@@ -56,9 +56,9 @@ public class UserService {
 
     @Transactional
     public UserModel createByEmail(String email) {
-        UserModel toSave = new UserModel();
-        toSave.setEmail(email);
-        UserModel user = userRepository.save(toSave);
+        UserModel newUser = new UserModel();
+        newUser.setEmail(email);
+        UserModel user = userRepository.save(newUser);
 
         Set<RoleModel> roleModels = new HashSet<>();
         RoleModel userRoleModel = roleRepository.findByName(ERole.ROLE_USER.toString())
@@ -66,7 +66,7 @@ public class UserService {
                         ERole.ROLE_USER)));
         roleModels.add(userRoleModel);
         for (RoleModel role : roleModels) {
-            userRoleRepository.save(new UserRoleModel(new UserRoleModelCompositeId(toSave, role)));
+            userRoleRepository.save(new UserRoleModel(new UserRoleModelCompositeId(newUser, role)));
         }
 
         return user;

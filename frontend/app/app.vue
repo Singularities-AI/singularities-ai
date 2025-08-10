@@ -11,11 +11,7 @@ import Toaster from '@/components/ui/toast/Toaster.vue'
 
 const useIdFunction = () => useId()
 
-const configStore = useConfigStore()
-onMounted(() => {
-  document.documentElement.style.setProperty('--radius', `${configStore.radius}rem`)
-  document.documentElement.classList.add(`theme-${configStore.theme}`)
-})
+onMounted(() => {})
 
 useHead({
   title: appName,

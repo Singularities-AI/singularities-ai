@@ -17,12 +17,14 @@ public class GlobalExceptionHandler {
 
     static {
         exceptionStatusMap.put(HttpRequestMethodNotSupportedException.class, HttpStatus.METHOD_NOT_ALLOWED);
+        exceptionStatusMap.put(BadCredentialsException.class, HttpStatus.UNAUTHORIZED);
 
         //custom exception
-        exceptionStatusMap.put(BadCredentialsException.class, HttpStatus.UNAUTHORIZED);
         exceptionStatusMap.put(SingularitiesAINotFoundException.class, HttpStatus.NOT_FOUND);
         exceptionStatusMap.put(SingularitiesAIConflictException.class, HttpStatus.CONFLICT);
         exceptionStatusMap.put(SingularitiesAIForbiddenException.class, HttpStatus.FORBIDDEN);
+        exceptionStatusMap.put(SingularitiesAIBadRequestException.class, HttpStatus.BAD_REQUEST);
+        exceptionStatusMap.put(SingularitiesAIInternalServerErrorException.class, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
