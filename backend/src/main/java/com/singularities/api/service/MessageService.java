@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,7 +23,6 @@ public class MessageService {
         messageModel.setChat(chat);
         messageModel.setModel(chat.getModel()); //the model that was used at the time the message was requested.
         messageModel.setContext(chat.getContext()); //the context that was used at the time the message was requested.
-        messageModel.setCreatedAt(LocalDateTime.now());
         return messageRepository.save(messageModel);
     }
 }

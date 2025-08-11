@@ -18,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,7 +40,6 @@ public class ChatService {
 
     private ChatModel create(UserModel user, String firstMessage, ModelModel model, String context) {
         ChatModel chatModel = new ChatModel();
-        chatModel.setCreationDate(LocalDateTime.now());
         chatModel.setUser(user);
         chatModel.setModel(model);
         chatModel.setContext(context);
