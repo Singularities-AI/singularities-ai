@@ -1,46 +1,91 @@
 import { defineStore } from 'pinia'
-import Cookies from 'universal-cookie'
+import { ref } from 'vue'
 import type { Chat } from '~/interfaces/Chat'
+import type { MessageResponse } from '~/interfaces/Message'
+import type { Page } from '~/interfaces/Page'
 
-const cookies = new Cookies()
+export const useChatStore = defineStore('chat', () => {
+  const chats = ref<Chat[]>([])
+  const page = ref<Page<Chat> | null>(null)
 
-export const useChatStore = defineStore('chat', {
-  state: () => ({}),
+  async function list(pageNumber = 0, pageSize = 20) {
+    const config = useRuntimeConfig()
 
-  actions: {
-    async list(): Promise<{ success: boolean, response?: Array<Chat> | string }> {
-      const config = useRuntimeConfig()
-
-      try {
-        const response = await fetch(`${config.public.apiUrl}/web/chats`, {
+    try {
+      const response = await useSecureFetch<Page<Chat>>(
+        `${config.public.apiUrl}/web/chats?page=${pageNumber}&size=${pageSize}&sort=creationDate,desc`,
+        {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${cookies.get('token')}`,
+            Authorization: `Bearer ${useCookie('token').value}`,
+          },
+        },
+      )
+
+      chats.value = response.content
+      page.value = response
+    }
+    catch (e) {}
+  }
+
+  async function remove(uuid: string) {
+    const config = useRuntimeConfig()
+
+    try {
+      await useSecureFetch(`${config.public.apiUrl}/web/chats/${uuid}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${useCookie('token').value}`,
+        },
+      })
+      await list()
+    }
+    catch (e) {}
+  }
+
+  async function sendMessage(chatUUID: string | null, content: string, modelUUID: string, context: string | null): Promise<MessageResponse | null> {
+    const config = useRuntimeConfig()
+
+    try {
+      const response = await useSecureFetch<MessageResponse>(
+        `${config.public.apiUrl}/web/chats/messages`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ chatUUID, content, modelUUID, context }),
+          headers: {
+            'Authorization': `Bearer ${useCookie('token').value}`,
             'Content-Type': 'application/json',
           },
-        })
+        },
+      )
 
-        if (!response.ok) {
-          let errorMessage = 'An error has occurred. Please try again later.'
-          const contentType = response.headers.get('Content-Type') || ''
+      return response
+    }
+    catch (e) {
+      return null
+    }
+  }
 
-          if (contentType.includes('application/json')) {
-            const errorData = await response.json()
-            errorMessage = errorData.message || errorMessage
-          }
-          else {
-            errorMessage = await response.text()
-          }
-          throw new Error(errorMessage)
-        }
+  async function listMessages(uuid: string): Promise<MessageResponse[]> {
+    const config = useRuntimeConfig()
 
-        // store response
-        const json = await response.json()
-        return { success: true, response: json }
-      }
-      catch (error: any) {
-        return { success: false, response: error.message }
-      }
-    },
-  },
+    try {
+      const response = await useSecureFetch<MessageResponse[]>(
+        `${config.public.apiUrl}/web/chats/${uuid}/messages`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${useCookie('token').value}`,
+          },
+        },
+      )
+
+      return response
+    }
+    catch (e) {
+      return []
+    }
+  }
+
+  return { chats, list, remove, sendMessage, listMessages }
 })

@@ -14,7 +14,7 @@ public class WebClientConfig {
     @Bean
     public WebClient ollamaWebClient() {
         return WebClient.builder()
-                .baseUrl("http://" + url)
+                .baseUrl(url)
                 .build();
     }
 }

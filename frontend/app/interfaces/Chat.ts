@@ -1,4 +1,9 @@
+import type { Model } from './Model'
+
 export interface Chat {
-  email: string
+  id: string
+  title: string
   context: string | null
+  lastUpdate: string
+  model: Model
 }

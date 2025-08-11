@@ -11,6 +11,7 @@ public class MessageMapper {
 
     public MessageResponseDto toDto(MessageModel model) {
         MessageResponseDto dto = new MessageResponseDto();
+        dto.setChatUUID(model.getChat().getId());
         dto.setId(model.getId());
         dto.setContent(model.getContent());
         dto.setRole(model.getRole());

@@ -1,6 +1,5 @@
 package com.singularities.api.service;
 
-
 import com.singularities.api.data.entity.AuthTokenModel;
 import com.singularities.api.data.entity.UserModel;
 import com.singularities.api.data.repository.UserRepository;
@@ -17,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -38,6 +38,9 @@ public class AuthService {
 
     @Value("${app.url}")
     private String appUrl;
+
+    @Value("${app.name}")
+    private String appName;
 
 
     public UserModel getUserByAuthentication(Authentication authentication) {
@@ -94,9 +97,12 @@ public class AuthService {
         String url = appUrl + "/email-confirmation?email=" + email + "&code=" + securityCode;
 
         try {
-            emailService.sendHtmlEmail(email, "Connect to Singularities AI",
+            emailService.sendHtmlEmail(email, "Connect to " + appName,
                     securityLoginEmail.getContentAsString(StandardCharsets.UTF_8)
                             .replace("{{code}}", securityCode)
+                            .replace("{{appName}}", appName)
+                            .replace("{{appUrl}}", appUrl)
+                            .replace("{{year}}", String.valueOf(LocalDate.now().getYear()))
                             .replace("{{url}}", url));
 
         } catch (Exception e) {

@@ -12,6 +12,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MessageResponseDto {
 
+    private UUID chatUUID;
     private UUID id;
     private String role;
     private String content;

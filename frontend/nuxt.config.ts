@@ -34,12 +34,6 @@ export default defineNuxtConfig({
     },
   },
 
-  // routeRules: {
-  //   // '/admin/**': { ssr: false },
-  //   // '/account/**': { ssr: false },
-  //   // '/api/**': { cors: true },
-  // },
-
   vue: {
     compilerOptions: {
       isCustomElement: (tag: string) => tag === 'iconify-icon',
@@ -53,17 +47,7 @@ export default defineNuxtConfig({
 
   content: {
     highlight: {
-      // Theme used in all color schemes.
       theme: 'github-dark-dimmed',
-      // OR
-      // theme: {
-      //   // Default theme (same as single string)
-      //   default: 'vitesse-dark',
-      //   // Theme used if `html.dark`
-      //   dark: 'github-dark',
-      //   // Theme used if `html.sepia`
-      //   sepia: 'monokai'
-      // }
     },
   },
 
@@ -77,8 +61,8 @@ export default defineNuxtConfig({
   ],
 
   colorMode: {
-    preference: 'system', // default value of $colorMode.preference
-    fallback: 'light', // fallback value if not system preference found
+    preference: 'system',
+    fallback: 'light',
     classSuffix: '',
   },
 

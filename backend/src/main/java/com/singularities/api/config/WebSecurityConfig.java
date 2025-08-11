@@ -26,8 +26,8 @@ public class WebSecurityConfig {
 
     private final AuthTokenFilter authenticationJwtTokenFilter;
 
-    @Value("${singularities.app.allowedOrigins}")
-    List<String> allowedOrigins;
+    @Value("${app.url.client}")
+    List<String> allowedClientsUrl;
 
 
     @Bean
@@ -40,7 +40,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/v3/api-docs/**", "/web/auth/**")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/web/auth/**")
                         .permitAll().anyRequest().authenticated());
         http.cors(cors -> corsConfigurationSource());
         http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
@@ -51,7 +51,7 @@ public class WebSecurityConfig {
     @Bean
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedOrigins(allowedClientsUrl);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

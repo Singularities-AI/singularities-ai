@@ -35,7 +35,7 @@ public class ChatController {
 
     //Chats ----
 
-    @GetMapping("/")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('USER')")
     public Page<ChatResponseDto> list(Pageable pageable) {
