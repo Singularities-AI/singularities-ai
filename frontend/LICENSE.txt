@@ -1,0 +1,19 @@
+Copyright (c) 2025 Singularities AI
+
+Source-Available Non-Commercial License
+
+You may:
+- Download, use, and modify this software for personal, educational, or non-commercial purposes.
+
+You may not:
+- Sell, redistribute, or use this software for commercial purposes without obtaining a commercial license from the copyright holder.
+- Companies with more than 50 users must acquire a commercial license to use this software.
+
+Warranty:
+- The free version (personal/non-commercial use) is provided "as-is", without any warranty.
+- The commercial version (enterprise license) may include specific warranties as defined in the commercial agreement.
+
+Distribution:
+- Any redistribution, modified or unmodified, must retain this license text.
+
+By using this software, you agree to comply with the terms of this license.
