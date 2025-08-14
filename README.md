@@ -1,9 +1,7 @@
-
-<center>
-  <img style="width:65px;" src="https://i.ibb.co/08rtXCB/logo.png" alt="logo" border="0">
-
-  # Singularities AI - Ollama Web UI
-</center>
+<p align="center">
+  <img src="https://i.ibb.co/08rtXCB/logo.png" alt="logo" width="65">
+</p>
+<h1 align="center">Singularities AI - Ollama Web UI</h1>
 
 Singularities AI is a web platform designed to leverage text-based AI models powered by Ollama. Feature-rich, it has been built to deliver a simple yet high-performance experience, even for users new to LLMs. With its customization options, role configuration, and access management, Singularities AI is an ideal solution for professional use, ensuring data security and eliminating reliance on proprietary APIs.
 
@@ -50,8 +48,6 @@ pnpm install
 ```
 
 3. Start the application using the scripts available in `package.json`.
-
-&nbsp;
 
 > ⚠
 > The `:dev` branch contains the latest unstable features and changes. Use it at your own risk as it may have bugs or incomplete features.
