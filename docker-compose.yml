@@ -1,0 +1,48 @@
+services:
+  backend:
+    image: docker_hub_user/singularities-ai-api:latest
+    container_name: singularities-backend
+    environment:
+      - singularities.app.jwtSecret=your-jwt-secret
+      - spring.mail.host=your-smtp-host
+      - spring.mail.username=your-smtp-username
+      - spring.mail.password=your-smtp-password
+      - app.name=Singularities AI
+      - app.url=http://localhost:7000
+      - app.url.client=http://localhost:7000
+      - spring.ai.ollama.base-url=http://ollama:11434
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ollama
+      - psql
+
+  frontend:
+    image: dockerhub-user/singularities-ai-frontend:latest
+    container_name: singularities-frontend
+    environment:
+      - API_URL=http://localhost:8080
+    ports:
+      - "7000:80"
+    depends_on:
+      - backend
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: singularities-ollama
+    ports:
+      - "11434:11434"
+  psql:
+    image: postgres:16
+    container_name: singularities-db
+    environment:
+      POSTGRES_DB: singularities
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - psql_data:/var/lib/postgresql/data
+
+volumes:
+  psql_data:
