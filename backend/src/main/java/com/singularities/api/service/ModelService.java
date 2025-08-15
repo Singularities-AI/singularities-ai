@@ -44,7 +44,7 @@ public class ModelService {
     public void download(UUID uuid) {
         ModelModel model = findByUUID(uuid);
 
-        if(model.isDownload()) {
+        if (model.isDownload()) {
             throw new SingularitiesAIConflictException(String.format(MODEL_IS_ALREADY_DOWNLOAD, uuid));
         }
 
@@ -60,15 +60,15 @@ public class ModelService {
     public void delete(UUID uuid) {
         ModelModel model = findByUUID(uuid);
 
-        if(model.isDownloading()) {
+        if (model.isDownloading()) {
             throw new SingularitiesAIBadRequestException(String.format(MODEL_IS_CURRENTLY_IN_DOWNLOAD, uuid));
         }
 
-        if(model.isDefault()) {
+        if (model.isDefault()) {
             throw new SingularitiesAIBadRequestException(String.format(MODEL_IS_CURRENTLY_DEFAULT, uuid));
         }
 
-        if(model.isDownload()) {
+        if (model.isDownload()) {
             //run async ollama delete
             ollamaService.deleteModel(model);
         }
@@ -79,7 +79,7 @@ public class ModelService {
     public void setDefault(UUID uuid) {
         ModelModel model = findByUUID(uuid);
 
-        if(!model.isDownload()) {
+        if (!model.isDownload()) {
             throw new SingularitiesAIBadRequestException(String.format(MODEL_IS_NOT_DOWNLOAD, uuid));
         }
 

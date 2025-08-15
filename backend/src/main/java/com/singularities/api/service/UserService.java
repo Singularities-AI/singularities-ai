@@ -5,6 +5,7 @@ import com.singularities.api.data.entity.RoleModel;
 import com.singularities.api.data.entity.UserModel;
 import com.singularities.api.data.entity.UserRoleModel;
 import com.singularities.api.data.entity.UserRoleModelCompositeId;
+import com.singularities.api.data.repository.AuthTokenRepository;
 import com.singularities.api.data.repository.RoleRepository;
 import com.singularities.api.data.repository.UserRepository;
 import com.singularities.api.data.repository.UserRoleRepository;
@@ -13,6 +14,8 @@ import com.singularities.api.exception.SingularitiesAINotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +36,33 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
+    private final AuthTokenRepository authTokenRepository;
+
+    private final MessageService messageService;
+    private final ChatService chatService;
+
+
+    public Page<UserModel> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+
+    @Transactional
+    public void delete(String uuid) {
+        UserModel user = findByUUID(uuid);
+
+        authTokenRepository.deleteAllByUser(user);
+        userRoleRepository.deleteAllByUser(user);
+        chatService.deleteAllByUser(user);
+        messageService.deleteAllByUser(user);
+        userRepository.delete(user);
+    }
 
 
     public UserModel findByUUID(String uuid) {
-       return userRepository.findById(UUID.fromString(uuid)).orElseThrow(
-               () -> new SingularitiesAINotFoundException(String.format(USER_NOT_FOUND, uuid))
-       );
+        return userRepository.findById(UUID.fromString(uuid)).orElseThrow(
+                () -> new SingularitiesAINotFoundException(String.format(USER_NOT_FOUND, uuid))
+        );
     }
 
 
