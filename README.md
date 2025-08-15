@@ -3,7 +3,6 @@
 </p>
 <h1 align="center">Singularities AI - Ollama Web UI</h1>
 
-
 Singularities AI is a web platform designed to leverage text-based AI models powered by Ollama. Feature-rich, it has been built to deliver a simple yet high-performance experience, even for users new to LLMs. With its customization options, role configuration, and access management, Singularities AI is an ideal solution for professional use, ensuring data security and eliminating reliance on proprietary APIs.
 
 **Need an enterprise plan or custom features?** – **[Contact us](mailto:contact@singularities-ai.com)**
