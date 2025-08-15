@@ -28,24 +28,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthTokenService {
 
-    private final UserService userService;
-    private final AuthTokenRepository authTokenRepository;
-
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom random = new SecureRandom();
     private static final ObjectMapper objectMapper = new ObjectMapper();
-
+    private final UserService userService;
+    private final AuthTokenRepository authTokenRepository;
     @Value("${singularities.app.jwtSecret}")
     private String jwtSecret;
 
     @Value("${singularities.app.jwtExpirationMs}")
     private int jwtExpirationMs;
-
-
-    private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
-    }
-
 
     public static String generateSecureRandomString(int length) {
         StringBuilder sb = new StringBuilder(length);
@@ -55,6 +47,9 @@ public class AuthTokenService {
         return sb.toString();
     }
 
+    private Key key() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+    }
 
     public AuthTokenModel create(UserModel user) {
         deleteAllByUser(user);
@@ -74,25 +69,26 @@ public class AuthTokenService {
 
         authToken.setJwt(jwt);
 
-       return authTokenRepository.save(authToken);
+        return authTokenRepository.save(authToken);
     }
 
 
     public List<String> getRolesFromJwt(String jwt) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(jwt).getBody();
         Object rawRoles = claims.get("roles");
-        return objectMapper.convertValue(rawRoles, new TypeReference<>() {});
+        return objectMapper.convertValue(rawRoles, new TypeReference<>() {
+        });
     }
 
 
-    private void deleteAllByUser(UserModel user) {
+    public void deleteAllByUser(UserModel user) {
         authTokenRepository.deleteAllByUser(user);
         authTokenRepository.flush();
     }
 
 
     public Optional<AuthTokenModel> getTokenByEmailAndSecurityCode(String email, String securityCode) {
-       return authTokenRepository.findByUser_EmailAndSecurityCode(email, securityCode);
+        return authTokenRepository.findByUser_EmailAndSecurityCode(email, securityCode);
     }
 
 

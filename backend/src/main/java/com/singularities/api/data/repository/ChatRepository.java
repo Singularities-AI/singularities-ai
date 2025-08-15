@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface ChatRepository extends JpaRepository<ChatModel, UUID> {
 
     Page<ChatModel> findAllByUser(UserModel user, Pageable pageable);
+
+    void deleteAllByUser(UserModel user);
 }

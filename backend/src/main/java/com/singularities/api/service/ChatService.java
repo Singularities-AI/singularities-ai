@@ -134,4 +134,9 @@ public class ChatService {
 
         return chatModel;
     }
+  
+
+    public void deleteAllByUser(UserModel user) {
+        chatRepository.deleteAllByUser(user);
+    }
 }

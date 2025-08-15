@@ -3,6 +3,7 @@ package com.singularities.api.service;
 import com.singularities.api.data.constant.EMessageRole;
 import com.singularities.api.data.entity.ChatModel;
 import com.singularities.api.data.entity.MessageModel;
+import com.singularities.api.data.entity.UserModel;
 import com.singularities.api.data.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,5 +25,10 @@ public class MessageService {
         messageModel.setModel(chat.getModel()); //the model that was used at the time the message was requested.
         messageModel.setContext(chat.getContext()); //the context that was used at the time the message was requested.
         return messageRepository.save(messageModel);
+    }
+
+
+    public void deleteAllByUser(UserModel user) {
+        messageRepository.deleteAllByUser(user);
     }
 }
