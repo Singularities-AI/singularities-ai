@@ -33,4 +33,8 @@ public class ExceptionMessage {
     public static final String AUTH_FAILURE = "Authentication failed.";
     public static final String AUTH_CODE_INVALID = "Authentication code is invalid: %s.";
     public static final String AUTH_CODE_EXPIRED = "Authentication code is expired: %s.";
+
+    //SETTINGS --
+    public static final String SETTING_NOT_FOUND = "Setting not found: %s.";
+
 }

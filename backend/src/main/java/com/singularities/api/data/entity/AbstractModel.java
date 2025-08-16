@@ -27,5 +27,4 @@ public class AbstractModel {
     @UpdateTimestamp
     @Column(name = "last_update", columnDefinition = "TIMESTAMP")
     private LocalDateTime lastUpdate;
-
 }
