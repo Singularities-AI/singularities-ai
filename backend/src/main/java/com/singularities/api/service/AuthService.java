@@ -1,6 +1,8 @@
 package com.singularities.api.service;
 
+import com.singularities.api.data.constant.ESettingKey;
 import com.singularities.api.data.entity.AuthTokenModel;
+import com.singularities.api.data.entity.SettingValueModel;
 import com.singularities.api.data.entity.UserModel;
 import com.singularities.api.data.repository.UserRepository;
 import com.singularities.api.dto.request.GenerateTokenRequestDto;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static com.singularities.api.exception.ExceptionMessage.*;
@@ -32,6 +35,7 @@ public class AuthService {
     private final EmailService emailService;
     private final UserService userService;
     private final AuthTokenService authTokenService;
+    private final SettingService settingService;
 
     @Value("classpath:email/SecurityLoginEmail.html")
     private Resource securityLoginEmail;
@@ -76,6 +80,8 @@ public class AuthService {
 
     @Transactional
     public void generateToken(GenerateTokenRequestDto form) {
+        validateAuthorizedEmailDomain(form);
+
         UserModel user = new UserModel();
         if (form.getEmail() != null && userRepository.findByEmail(form.getEmail()).isEmpty()) {
             //create new user
@@ -90,6 +96,16 @@ public class AuthService {
 
         //send email with code
         sendEmailWithSecurityCode(user.getEmail(), securityCode);
+    }
+
+
+    private void validateAuthorizedEmailDomain(GenerateTokenRequestDto form) {
+        List<String> domains = settingService.getByKey(ESettingKey.AUTH_AUTHORIZED_DOMAIN).getValues().stream().map(SettingValueModel::getValue).toList();
+        boolean authorized = domains.isEmpty() || domains.stream().anyMatch(domain -> form.getEmail().toLowerCase().endsWith("@" + domain.toLowerCase()));
+
+        if (!authorized) {
+            throw new SingularitiesAIForbiddenException(String.format(AUTH_EMAIL_FORBIDDEN, form.getEmail()));
+        }
     }
 
 
