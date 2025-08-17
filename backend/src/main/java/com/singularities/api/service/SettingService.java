@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.singularities.api.exception.ExceptionMessage.SETTING_NOT_FOUND;
 
@@ -30,12 +31,16 @@ public class SettingService {
     }
 
 
+    public Optional<SettingModel> getOptionalByKey(ESettingKey key) {
+        return settingRepository.findByKey(key);
+    }
+
+
     @Transactional
     public SettingModel createOrUpdateValues(ESettingKey key, List<String> values) {
-        SettingModel setting = getByKey(key);
+        SettingModel setting = getOptionalByKey(key).orElse(new SettingModel(key));
 
         if (!setting.isMultiple()) {
-            // If the setting is single-value, replace the existing values
             setting.getValues().clear();
         }
 
@@ -45,6 +50,8 @@ public class SettingService {
             val.setSetting(setting);
             setting.getValues().add(val);
         }
+
+        //TODO ERROR: duplicate key value violates unique constraint "uq_setting_value"
 
         return settingRepository.save(setting);
     }

@@ -2,6 +2,7 @@ package com.singularities.api.service;
 
 import com.singularities.api.data.constant.ESettingKey;
 import com.singularities.api.data.entity.AuthTokenModel;
+import com.singularities.api.data.entity.SettingModel;
 import com.singularities.api.data.entity.SettingValueModel;
 import com.singularities.api.data.entity.UserModel;
 import com.singularities.api.data.repository.UserRepository;
@@ -100,7 +101,13 @@ public class AuthService {
 
 
     private void validateAuthorizedEmailDomain(GenerateTokenRequestDto form) {
-        List<String> domains = settingService.getByKey(ESettingKey.AUTH_AUTHORIZED_DOMAIN).getValues().stream().map(SettingValueModel::getValue).toList();
+        List<String> domains = settingService.getOptionalByKey(ESettingKey.AUTH_AUTHORIZED_DOMAIN)
+                .map(SettingModel::getValues)
+                .orElse(List.of())
+                .stream()
+                .map(SettingValueModel::getValue)
+                .toList();
+
         boolean authorized = domains.isEmpty() || domains.stream().anyMatch(domain -> form.getEmail().toLowerCase().endsWith("@" + domain.toLowerCase()));
 
         if (!authorized) {

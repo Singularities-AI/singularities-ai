@@ -23,4 +23,11 @@ public class SettingModel extends AbstractModel {
 
     @OneToMany(mappedBy = "setting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SettingValueModel> values = new ArrayList<>();
+
+    public SettingModel(ESettingKey key) {
+        this.key = key;
+        this.isMultiple = key.isMultiple();
+    }
+
+    public SettingModel() {}
 }
