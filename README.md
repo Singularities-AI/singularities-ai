@@ -3,20 +3,24 @@
 </p>
 <h1 align="center">Singularities AI - Ollama Web UI</h1>
 
-Singularities AI is a web platform designed to leverage text-based AI models powered by Ollama. Feature-rich, it has been built to deliver a simple yet high-performance experience, even for users new to LLMs. With its customization options, role configuration, and access management, Singularities AI is an ideal solution for professional use, ensuring data security and eliminating reliance on proprietary APIs.
+Singularities AI is a web platform designed to leverage text-based AI models powered by Ollama. Feature-rich, it has
+been built to deliver a simple yet high-performance experience, even for users new to LLMs. With its customization
+options, role configuration, and access management, Singularities AI is an ideal solution for professional use, ensuring
+data security and eliminating reliance on proprietary APIs.
 
 **Need an enterprise plan or custom features?** – **[Contact us](mailto:contact@singularities-ai.com)**
 
 ## Installation 🚀
 
 ### Ollama
+
 You need to have Ollama installed on a machine with a URL accessible by the API.
 
 Please follow the [Ollama documentation](https://github.com/ollama/ollama) for installation instructions.
 
 ### Running the API
 
-You need to configure the following properties: 
+You need to configure the following properties:
 
 - `singularities.app.jwtSecret` = Your JWT secret (e.g., generated with a JWT secret generator)
 - `spring.mail.host` = Your SMTP provider host
@@ -50,22 +54,61 @@ pnpm install
 3. Start the application using the scripts available in `package.json`.
 
 > ⚠
-> The `:dev` branch contains the latest unstable features and changes. Use it at your own risk as it may have bugs or incomplete features.
+> The `:dev` branch contains the latest unstable features and changes. Use it at your own risk as it may have bugs or
+> incomplete features.
+
+### Containerisation 🐳
+
+Run the API and frontend using our prebuilt Docker images or build them yourself.
+
+---
+
+#### 1. Using prebuilt images
+
+```bash
+# Backend
+docker pull singularitiesai/singularities-ai-api:latest
+
+# Frontend
+docker pull singularitiesai/singularities-ai-frontend:latest
+```
+
+#### 2. Using Docker Compose
+
+A [docker-compose.yml](./docker-compose.yml) example is included in the repository.
+Run the full stack (API + frontend + Ollama + database) with:
+
+```bash
+docker compose up -d
+```
+
+#### 3. Building locally
+
+```bash
+# Backend
+docker build -t singularities-ai-api ./backend
+
+# Frontend
+docker build -t singularities-ai-frontend ./frontend
+````
 
 ## Features ⚡️
 
-- **Secure and Local-First**: All LLMs are stored and run on your machine without any external internet interaction. This ensures that no data can be leaked.
+- **Secure and Local-First**: All LLMs are stored and run on your machine without any external internet interaction.
+  This ensures that no data can be leaked.
 
-- **Multi-Model Conversations**: Singularities supports multiple LLMs and allows you to switch between them within the same conversation with just a few clicks.
+- **Multi-Model Conversations**: Singularities supports multiple LLMs and allows you to switch between them within the
+  same conversation with just a few clicks.
 
-- **Chat and User Context**: You can define a custom context for a single conversation or across all your conversations to personalize your interactions with the LLMs.
+- **Chat and User Context**: You can define a custom context for a single conversation or across all your conversations
+  to personalize your interactions with the LLMs.
 
 - **Responsive Design**: The application works seamlessly on PC, tablet, or mobile, regardless of screen size.
 
-- **Easy Customization**: The public source code allows anyone to modify, remove, or add new features according to their needs.
+- **Easy Customization**: The public source code allows anyone to modify, remove, or add new features according to their
+  needs.
 
 - **Continuous Updates**: Singularities AI is actively developed, with new features being added regularly.
-
 
 ## ⚙️ Built with
 
@@ -78,6 +121,7 @@ pnpm install
 [![Ollama](https://img.shields.io/badge/Ollama-fff?logo=ollama&logoColor=000)](#)
 
 ## Screenshot 📷
+
 <img src="https://i.ibb.co/v4rVTLcJ/image.png" alt="Login page" border="0">
 <img src="https://i.ibb.co/8gfx4wpp/image.png" alt="Chat page" border="0">
 <img src="https://i.ibb.co/Z1crttjh/image.png" alt="Account page" border="0">
@@ -92,4 +136,5 @@ For full license text, see LICENSE.txt.
 
 ## Support 💬
 
-If you have any questions, suggestions, or need assistance, please open an issue or contact us at contact@singularities-ai.com
+If you have any questions, suggestions, or need assistance, please open an issue or contact us at
+contact@singularities-ai.com
