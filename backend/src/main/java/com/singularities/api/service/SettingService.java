@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.singularities.api.exception.ExceptionMessage.SETTING_NOT_FOUND;
 
@@ -44,14 +46,18 @@ public class SettingService {
             setting.getValues().clear();
         }
 
-        for (String v : values) {
-            SettingValueModel val = new SettingValueModel();
-            val.setValue(v);
-            val.setSetting(setting);
-            setting.getValues().add(val);
-        }
+        Set<String> existingValues = setting.getValues()
+                .stream()
+                .map(SettingValueModel::getValue).collect(Collectors.toSet());
 
-        //TODO ERROR: duplicate key value violates unique constraint "uq_setting_value"
+        for (String v : values) {
+            if (!existingValues.contains(v)) {
+                SettingValueModel val = new SettingValueModel();
+                val.setValue(v);
+                val.setSetting(setting);
+                setting.getValues().add(val);
+            }
+        }
 
         return settingRepository.save(setting);
     }

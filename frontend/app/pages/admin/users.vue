@@ -39,6 +39,15 @@ watch(newDomain, (value) => {
   domainError.value = result.success ? '' : result.error?.errors?.[0]?.message || 'Unknown error'
 })
 
+watch(showDomainDialog, (newVal, oldVal) => {
+  if (oldVal === true && newVal === false)
+    resetDomainDialog()
+})
+
+async function resetDomainDialog() {
+  newDomain.value = ''
+}
+
 async function loadPage(pageNumber: number) {
   currentPage.value = pageNumber
   await userStore.list(pageNumber - 1, itemsPerPage)
@@ -79,8 +88,19 @@ async function saveDomain() {
   if (!result.success)
     return
 
+  // Check if the domain already exists
+  const existingDomains = settingStore.settings.AUTH_AUTHORIZED_DOMAIN || []
+  if (existingDomains.includes(newDomain.value)) {
+    toast({
+      title: 'Error',
+      description: 'This domain already exists.',
+      variant: 'destructive',
+    })
+    return
+  }
+
   const { success, message } = await settingStore.addValue('AUTH_AUTHORIZED_DOMAIN', newDomain.value)
-  newDomain.value = ''
+  resetDomainDialog()
 
   if (!success) {
     toast({
@@ -112,7 +132,11 @@ async function removeDomain(domain: string) {
 <template>
   <main class="grid flex-1 gap-4 overflow-auto p-4">
     <div class="relative flex flex-col gap-4">
-      <div class="flex justify-end">
+      <div class="flex items-center justify-between">
+        <h1 class="text-xl font-semibold">
+          Users
+        </h1>
+
         <Dialog v-model:open="showDomainDialog">
           <DialogTrigger as-child>
             <Button variant="outline">
@@ -123,11 +147,11 @@ async function removeDomain(domain: string) {
           <DialogContent class="max-w-lg">
             <DialogHeader>
               <DialogTitle>Authorized Domains</DialogTitle>
-              Allowed domains restrict the registration of new users to specific email addresses (e.g., @domain.com). To allow all domains, simply leave the list empty.
+              Authorized domains restrict the registration of new users to specific email addresses (e.g., @domain.com). To allow all domains, simply leave the list empty.
             </DialogHeader>
 
             <!-- Authorized domains -->
-            <div class="mt-4 overflow-hidden border rounded-md">
+            <div class="mt-4 border rounded-md">
               <div
                 v-for="domain in settingStore.settings.AUTH_AUTHORIZED_DOMAIN || []"
                 :key="domain"
