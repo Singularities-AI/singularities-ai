@@ -18,8 +18,8 @@ const sidebarNavItems: Item[] = [
     href: '#',
   },
   {
-    title: 'Users (soon)',
-    href: '#',
+    title: 'Users',
+    href: '/admin/users',
   },
   {
     title: 'Profils (soon)',

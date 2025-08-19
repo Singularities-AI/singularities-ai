@@ -31,6 +31,11 @@ public class ExceptionMessage {
     //AUTH --
     public static final String USER_AUTHENTICATION = "Cannot set user authentication";
     public static final String AUTH_FAILURE = "Authentication failed.";
+    public static final String AUTH_EMAIL_FORBIDDEN = "Email domain not allowed: %s.";
     public static final String AUTH_CODE_INVALID = "Authentication code is invalid: %s.";
     public static final String AUTH_CODE_EXPIRED = "Authentication code is expired: %s.";
+
+    //SETTINGS --
+    public static final String SETTING_NOT_FOUND = "Setting not found: %s.";
+
 }

@@ -21,11 +21,12 @@ export const useAuthStore = defineStore('auth', {
         })
 
         if (!response.ok)
-          return { success: false, message: 'An error has occurred. Please try again later.' }
+          return { success: false, message: await response.text() }
+
         return { success: true }
       }
       catch (error: any) {
-        return { success: false, message: 'An error has occurred. Please try again later.' }
+        return { success: false, message: error.message }
       }
     },
 
