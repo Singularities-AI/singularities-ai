@@ -1,20 +1,16 @@
 package com.singularities.api.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.singularities.api.dto.AbstractDto;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChatResponseDto {
+public class ChatResponseDto extends AbstractDto {
 
-    private UUID id;
     private String title;
     private String context;
-    private LocalDateTime lastUpdate;
     private ModelResponseDto model;
 }

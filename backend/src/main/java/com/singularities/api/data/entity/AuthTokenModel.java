@@ -6,18 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "auth_tokens", uniqueConstraints = {@UniqueConstraint(columnNames = "user_id")})
-public class AuthTokenModel {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class AuthTokenModel extends AbstractModel {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")

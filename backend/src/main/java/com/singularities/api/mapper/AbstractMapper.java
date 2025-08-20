@@ -14,7 +14,6 @@ public class AbstractMapper<T extends AbstractModel, S extends AbstractDto> {
         return dto;
     }
 
-
     public T completeAbstractModel(S dto, T model) {
         model.setCreationDate(dto.getCreationDate());
         model.setLastUpdate(dto.getLastUpdate());

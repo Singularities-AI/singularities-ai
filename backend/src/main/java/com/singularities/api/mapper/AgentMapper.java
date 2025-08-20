@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AgentMapper {
 
+    private final AbstractMapper<AgentModel, AgentResponseDto> abstractMapper;
+
     public AgentResponseDto toDto(AgentModel model) {
         AgentResponseDto dto = new AgentResponseDto();
         dto.setId(model.getId());
@@ -20,8 +22,7 @@ public class AgentMapper {
         dto.setName(model.getName());
         dto.setDescription(model.getDescription());
         dto.setIcon(model.getIcon());
-        dto.setCreatedAt(model.getCreationDate());
-        return dto;
+        return abstractMapper.completeAbstractDto(model, dto);
     }
 
     public Page<AgentResponseDto> toDto(Page<AgentModel> page) {

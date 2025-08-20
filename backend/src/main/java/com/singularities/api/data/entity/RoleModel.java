@@ -1,22 +1,20 @@
 package com.singularities.api.data.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "roles")
-public class RoleModel {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class RoleModel extends AbstractModel {
 
     @Column(length = 20)
     private String name;

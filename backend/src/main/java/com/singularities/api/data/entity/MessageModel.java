@@ -3,20 +3,12 @@ package com.singularities.api.data.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "messages")
-public class MessageModel {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class MessageModel extends AbstractModel {
 
     @ManyToOne
     @JoinColumn(name = "chat_id", nullable = false)
@@ -34,9 +26,5 @@ public class MessageModel {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
 }
 

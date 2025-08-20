@@ -29,6 +29,5 @@ public class SettingModel extends AbstractModel {
         this.isMultiple = key.isMultiple();
     }
 
-    public SettingModel() {
-    }
+    public SettingModel() {}
 }

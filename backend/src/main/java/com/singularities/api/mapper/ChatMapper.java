@@ -13,15 +13,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatMapper {
 
+    private final AbstractMapper<ChatModel, ChatResponseDto> abstractMapper;
+
     public ChatResponseDto toDto(ChatModel model) {
         ChatResponseDto dto = new ChatResponseDto();
         dto.setId(model.getId());
         dto.setTitle(model.getTitle());
         dto.setContext(model.getContext());
         dto.setLastUpdate(model.getLastUpdate());
-        return dto;
+        return abstractMapper.completeAbstractDto(model, dto);
     }
-
 
     public Page<ChatResponseDto> toDto(Page<ChatModel> page) {
         return new PageImpl<>(
