@@ -12,36 +12,26 @@ CREATE TABLE agents
 );
 
 ALTER TABLE auth_tokens
-    ADD COLUMN creation_date TIMESTAMP NOT NULL;
+    ADD COLUMN creation_date TIMESTAMP NOT NULL DEFAULT now();
 ALTER TABLE auth_tokens
     ADD COLUMN last_update TIMESTAMP NULL;
 
-ALTER TABLE chats
-    ADD COLUMN creation_date TIMESTAMP NOT NULL;
-ALTER TABLE chats
-    ADD COLUMN last_update TIMESTAMP NULL;
-
 ALTER TABLE messages
-    ADD COLUMN creation_date TIMESTAMP NOT NULL;
+    ADD COLUMN creation_date TIMESTAMP NOT NULL DEFAULT now();
 ALTER TABLE messages
     ADD COLUMN last_update TIMESTAMP NULL;
 
 ALTER TABLE models
-    ADD COLUMN creation_date TIMESTAMP NOT NULL;
+    ADD COLUMN creation_date TIMESTAMP NOT NULL DEFAULT now();
 ALTER TABLE models
     ADD COLUMN last_update TIMESTAMP NULL;
 
 ALTER TABLE profiles
-    ADD COLUMN creation_date TIMESTAMP NOT NULL;
+    ADD COLUMN creation_date TIMESTAMP NOT NULL DEFAULT now();
 ALTER TABLE profiles
     ADD COLUMN last_update TIMESTAMP NULL;
 
 ALTER TABLE roles
-    ADD COLUMN creation_date TIMESTAMP NOT NULL;
+    ADD COLUMN creation_date TIMESTAMP NOT NULL DEFAULT now();
 ALTER TABLE roles
-    ADD COLUMN last_update TIMESTAMP NULL;
-
-ALTER TABLE settings
-    ADD COLUMN creation_date TIMESTAMP NOT NULL;
-ALTER TABLE settings
     ADD COLUMN last_update TIMESTAMP NULL;
