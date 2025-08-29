@@ -13,7 +13,7 @@ const auth = useAuthStore()
     <nav class="grid gap-1 p-2">
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button variant="ghost" size="icon" class="rounded-lg bg-muted" aria-label="Chat" @click="router.push('/')">
+          <Button variant="ghost" size="icon" class="rounded-lg bg-muted" aria-label="Chats" @click="router.push('/')">
             <Icon name="lucide:square-terminal" class="size-5" />
           </Button>
         </TooltipTrigger>
@@ -24,12 +24,12 @@ const auth = useAuthStore()
 
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button variant="ghost" size="icon" class="rounded-lg" aria-label="Models">
+          <Button variant="ghost" size="icon" class="rounded-lg" aria-label="Models" @click="router.push('/agents')">
             <Icon name="lucide:bot" class="size-5" />
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right" :side-offset="5" class="bg-black">
-          Agents (Coming soon)
+          Agents
         </TooltipContent>
       </Tooltip>
 
