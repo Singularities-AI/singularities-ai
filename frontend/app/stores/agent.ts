@@ -1,0 +1,35 @@
+import { defineStore } from 'pinia'
+import type { Agent } from '~/interfaces/Agent'
+import type { Page } from '~/interfaces/Page'
+
+export const useAgentStore = defineStore('agent', {
+  state: () => ({
+    agents: [] as Agent[],
+    page: null as Page<Agent> | null,
+  }),
+
+  actions: {
+    async list(pageNumber = 0, pageSize = 20): Promise<{ success: boolean, message?: string }> {
+      const config = useRuntimeConfig()
+
+      try {
+        const response = await useSecureFetch<Page<Agent>>(
+          `${config.public.apiUrl}/web/agents?page=${pageNumber}&size=${pageSize}&sort=creationDate,desc`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${useCookie('token').value}`,
+            },
+          },
+        )
+
+        this.agents = response.content
+        this.page = response
+        return { success: true }
+      }
+      catch (error: any) {
+        return { success: false, message: error.message }
+      }
+    },
+  },
+})

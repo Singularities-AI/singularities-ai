@@ -23,7 +23,7 @@ public class AgentController {
     private final AgentMapper agentMapper;
 
 
-    @GetMapping("/agents")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('USER')")
     public Page<AgentResponseDto> list(Pageable pageable) {

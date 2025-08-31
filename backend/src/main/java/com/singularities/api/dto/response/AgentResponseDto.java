@@ -12,7 +12,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AgentResponseDto extends AbstractDto {
 
-    private UUID modelUUID;
+    private ModelResponseDto model;
     private String icon;
     private String name;
     private String description;

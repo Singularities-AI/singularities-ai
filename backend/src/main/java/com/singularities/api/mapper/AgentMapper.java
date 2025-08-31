@@ -14,11 +14,12 @@ import java.util.stream.Collectors;
 public class AgentMapper {
 
     private final AbstractMapper<AgentModel, AgentResponseDto> abstractMapper;
+    private final ModelMapper modelMapper;
 
     public AgentResponseDto toDto(AgentModel model) {
         AgentResponseDto dto = new AgentResponseDto();
         dto.setId(model.getId());
-        dto.setModelUUID(model.getModel().getId());
+        dto.setModel(modelMapper.toDto(model.getModel()));
         dto.setName(model.getName());
         dto.setDescription(model.getDescription());
         dto.setIcon(model.getIcon());

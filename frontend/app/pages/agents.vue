@@ -8,13 +8,11 @@ import { Input } from '@/components/ui/input'
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
 
-const agents = ref<any[]>([])
+const router = useRouter()
+const agentStore = useAgentStore()
 
 onMounted(async () => {
-  agents.value = [
-    { id: '1', icon: 'lucide:send-horizontal', name: 'MagicBot', description: 'Created 150 days ago' },
-    { id: '2', icon: 'lucide:send-horizontal', name: 'SmartAI', description: 'Created 120 days ago' },
-  ]
+  await agentStore.list()
 })
 </script>
 
@@ -43,7 +41,7 @@ onMounted(async () => {
         <!-- Cartes -->
         <div class="grid gap-6 lg:grid-cols-3 sm:grid-cols-2">
           <Card
-            v-for="agent in agents"
+            v-for="agent in agentStore.agents"
             :key="agent.id"
             class="rounded-xl"
           >
@@ -65,7 +63,7 @@ onMounted(async () => {
                 </p>
               </div>
 
-              <Button size="sm" class="self-end gap-1.5 bg-black text-white">
+              <Button size="sm" class="self-end gap-1.5 bg-black text-white" @click="router.push(`/chats/new?agent=${agent.id}`)">
                 Start Chat
                 <Icon name="lucide:send-horizontal" class="size-3.5" />
               </Button>
