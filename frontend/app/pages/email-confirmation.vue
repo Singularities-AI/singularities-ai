@@ -5,9 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 
-definePageMeta({
-  layout: 'blank',
-})
+definePageMeta({ layout: 'blank' })
 
 const router = useRouter()
 const route = useRoute()

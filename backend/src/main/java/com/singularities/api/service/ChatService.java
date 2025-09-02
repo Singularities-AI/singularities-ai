@@ -36,10 +36,15 @@ public class ChatService {
 
     //SPRING AI
     private final org.springframework.ai.chat.model.ChatModel chatModelAI;
+    private final AgentService agentService;
 
 
-    private ChatModel create(UserModel user, String firstMessage, ModelModel model, String context) {
+    private ChatModel create(UserModel user, String firstMessage, ModelModel model, String context, UUID agentUUID) {
         ChatModel chatModel = new ChatModel();
+        if (agentUUID != null) {
+            chatModel.setAgent(agentService.findById(agentUUID));
+        }
+
         chatModel.setUser(user);
         chatModel.setModel(model);
         chatModel.setContext(context);
@@ -96,7 +101,7 @@ public class ChatService {
         ChatModel chatModel;
         if (form.getChatUUID() == null) {
             //create new chat
-            chatModel = create(user, form.getContent(), model, form.getContext());
+            chatModel = create(user, form.getContent(), model, form.getContext(), form.getAgentUUID());
         } else {
             chatModel = chatRepository.findById(form.getChatUUID()).orElseThrow(
                     () -> new SingularitiesAINotFoundException(String.format(CHAT_NOT_FOUND, form.getChatUUID()))

@@ -21,6 +21,10 @@ public class ChatModel extends AbstractModel {
     @JoinColumn(name = "model_id", nullable = false)
     private ModelModel model;
 
+    @ManyToOne
+    @JoinColumn(name = "agent_id")
+    private AgentModel agent;
+
     @Column(nullable = false)
     private String title;
 

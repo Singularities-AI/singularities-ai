@@ -13,4 +13,5 @@ public class ChatResponseDto extends AbstractDto {
     private String title;
     private String context;
     private ModelResponseDto model;
+    private AgentResponseDto agent;
 }

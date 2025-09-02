@@ -35,3 +35,6 @@ ALTER TABLE roles
     ADD COLUMN creation_date TIMESTAMP NOT NULL DEFAULT now();
 ALTER TABLE roles
     ADD COLUMN last_update TIMESTAMP NULL;
+
+ALTER TABLE chats
+    ADD COLUMN agent_id UUID;

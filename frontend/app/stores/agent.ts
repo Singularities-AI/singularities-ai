@@ -31,5 +31,25 @@ export const useAgentStore = defineStore('agent', {
         return { success: false, message: error.message }
       }
     },
+
+    async delete(uuid: string): Promise<{ success: boolean, message?: string }> {
+      const config = useRuntimeConfig()
+
+      try {
+        await useSecureFetch(`${config.public.apiUrl}/web/agents/${uuid}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${useCookie('token').value}`,
+            'Content-Type': 'application/json',
+          },
+        })
+
+        await this.list()
+        return { success: true }
+      }
+      catch (error: any) {
+        return { success: false, message: error.message }
+      }
+    },
   },
 })

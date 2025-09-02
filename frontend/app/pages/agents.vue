@@ -63,7 +63,7 @@ onMounted(async () => {
                 </p>
               </div>
 
-              <Button size="sm" class="self-end gap-1.5 bg-black text-white" @click="router.push(`/chats/new?agent=${agent.id}`)">
+              <Button size="sm" class="mt-3 self-end gap-1.5 bg-black text-white" @click="router.push(`/chats/new?agent=${agent.id}`)">
                 Start Chat
                 <Icon name="lucide:send-horizontal" class="size-3.5" />
               </Button>

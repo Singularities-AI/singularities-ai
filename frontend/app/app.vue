@@ -11,8 +11,6 @@ import Toaster from '@/components/ui/toast/Toaster.vue'
 
 const useIdFunction = () => useId()
 
-onMounted(() => {})
-
 useHead({
   title: appName,
 })

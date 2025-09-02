@@ -4,16 +4,15 @@ import Header from '~/components/Header.vue'
 import Sidebar from '~/components/Sidebar.vue'
 import { useModelStore } from '~/stores/model'
 import { useChatStore } from '~/stores/chat'
-import type { Model } from '~/interfaces/Model'
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
 
 const router = useRouter()
-
+const route = useRoute()
 const modelStore = useModelStore()
 const chatStore = useChatStore()
+const agentStore = useAgentStore()
 
-const availableModels = ref<Model[]>([])
 const selectedModel = ref<string>('')
 const context = ref<string>('')
 const selectedChatId = ref<string | null>(null)
@@ -30,9 +29,8 @@ interface Message {
 onMounted(async () => {
   await Promise.all([
     // load models available
-    modelStore.listAvailable().then((result) => {
-      availableModels.value = result
-      const defaultModel = availableModels.value.find(m => m.default)
+    modelStore.listAvailable().then(() => {
+      const defaultModel = modelStore.modelsAvailable.find(m => m.default)
       if (defaultModel)
         selectedModel.value = defaultModel.id
     }),
@@ -42,7 +40,6 @@ onMounted(async () => {
   ])
 
   // load chat if uuid is present in url
-  const route = useRoute()
   const chatUUID = route.params.uuid as string | undefined
   if (chatUUID && chatUUID !== 'new') {
     selectedChatId.value = chatUUID
@@ -53,6 +50,11 @@ onMounted(async () => {
       text: msg.content,
     }))
   }
+
+  // load agent if agent uuid is present in url
+  const agentUUID = route.params.agent as string | undefined
+  if (agentUUID)
+    agentStore.getByUUID(agentUUID)
 })
 
 async function sendMessage() {
@@ -202,7 +204,7 @@ function newChat() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem
-                      v-for="model in availableModels"
+                      v-for="model in modelStore.modelsAvailable"
                       :key="model.id"
                       :value="model.id"
                     >

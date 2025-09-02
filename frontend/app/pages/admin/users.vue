@@ -9,13 +9,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 
-definePageMeta({
-  layout: 'admin',
-  middleware: 'auth',
-})
+definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const userStore = useUserStore()
 const settingStore = useSettingStore()
+
+onMounted(() => {
+  loadPage(1)
+  settingStore.list('AUTH_AUTHORIZED_DOMAIN')
+})
 
 const currentPage = ref(1)
 const itemsPerPage = 20
@@ -52,11 +54,6 @@ async function loadPage(pageNumber: number) {
   currentPage.value = pageNumber
   await userStore.list(pageNumber - 1, itemsPerPage)
 }
-
-onMounted(() => {
-  loadPage(1)
-  settingStore.list('AUTH_AUTHORIZED_DOMAIN')
-})
 
 async function confirmDelete() {
   if (!userToDelete.value)

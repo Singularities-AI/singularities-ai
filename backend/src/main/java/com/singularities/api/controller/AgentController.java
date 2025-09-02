@@ -30,6 +30,13 @@ public class AgentController {
         return agentMapper.toDto(agentService.findAll(pageable));
     }
 
+    @GetMapping("/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER')")
+    public AgentResponseDto getByUUID(@PathVariable UUID uuid) {
+        return agentMapper.toDto(agentService.findById(uuid));
+    }
+
 
     //Admin --
 
