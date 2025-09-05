@@ -247,6 +247,7 @@ async function removeDomain(domain: string) {
             </Button>
           </PaginationItem>
           <PaginationItem>
+            @
             <PaginationNext :disabled="currentPage === totalPages" @click="loadPage(currentPage + 1)" />
           </PaginationItem>
         </PaginationContent>

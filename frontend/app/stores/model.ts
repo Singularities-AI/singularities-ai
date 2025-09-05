@@ -18,7 +18,7 @@ export const useModelStore = defineStore('model', {
             'Content-Type': 'application/json',
           },
         })
-        this.models = data
+        this.modelsAvailable = data
         return { success: true }
       }
       catch (error: any) {

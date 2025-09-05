@@ -32,6 +32,30 @@ export const useAgentStore = defineStore('agent', {
       }
     },
 
+    async create(form: any): Promise<{ success: boolean, message?: string }> {
+      const config = useRuntimeConfig()
+
+      try {
+        await useSecureFetch<string[]>(
+          `${config.public.apiUrl}/web/agents`,
+          {
+            method: 'POST',
+            body: JSON.stringify(form),
+            headers: {
+              'Authorization': `Bearer ${useCookie('token').value}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+
+        await this.list()
+        return { success: true }
+      }
+      catch (error: any) {
+        return { success: false, message: error.message }
+      }
+    },
+
     async delete(uuid: string): Promise<{ success: boolean, message?: string }> {
       const config = useRuntimeConfig()
 

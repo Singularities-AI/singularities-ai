@@ -3,8 +3,10 @@ package com.singularities.api.service;
 import com.singularities.api.data.entity.AgentModel;
 import com.singularities.api.data.entity.ModelModel;
 import com.singularities.api.data.repository.AgentRepository;
+import com.singularities.api.data.repository.ChatRepository;
 import com.singularities.api.dto.request.AgentRequestDto;
 import com.singularities.api.exception.SingularitiesAINotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import static com.singularities.api.exception.ExceptionMessage.AGENT_NOT_FOUND;
 public class AgentService {
 
     private final AgentRepository agentRepository;
+    private final ChatRepository chatRepository;
     private final ModelService modelService;
 
     public Page<AgentModel> findAll(Pageable pageable) {
@@ -35,7 +38,11 @@ public class AgentService {
     }
 
 
+    @Transactional
     public void delete(UUID id) {
+        //Unlink all conversations linked with this agent.
+        chatRepository.unlinkAllChatByAgentId(id);
+
         agentRepository.deleteById(id);
     }
 
