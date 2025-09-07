@@ -9,7 +9,7 @@ export const useAgentStore = defineStore('agent', {
   }),
 
   actions: {
-    async list(pageNumber = 0, pageSize = 20): Promise<{ success: boolean, message?: string }> {
+    async list(pageNumber = 0, pageSize = 20, append = false): Promise<{ success: boolean, message?: string }> {
       const config = useRuntimeConfig()
 
       try {
@@ -23,7 +23,11 @@ export const useAgentStore = defineStore('agent', {
           },
         )
 
-        this.agents = response.content
+        if (append)
+          this.agents = [...this.agents, ...response.content]
+        else
+          this.agents = response.content
+
         this.page = response
         return { success: true }
       }
@@ -40,6 +44,30 @@ export const useAgentStore = defineStore('agent', {
           `${config.public.apiUrl}/web/agents`,
           {
             method: 'POST',
+            body: JSON.stringify(form),
+            headers: {
+              'Authorization': `Bearer ${useCookie('token').value}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+
+        await this.list()
+        return { success: true }
+      }
+      catch (error: any) {
+        return { success: false, message: error.message }
+      }
+    },
+
+    async update(uuid: string, form: any): Promise<{ success: boolean, message?: string }> {
+      const config = useRuntimeConfig()
+
+      try {
+        await useSecureFetch<string[]>(
+          `${config.public.apiUrl}/web/agents/${uuid}`,
+          {
+            method: 'PUT',
             body: JSON.stringify(form),
             headers: {
               'Authorization': `Bearer ${useCookie('token').value}`,

@@ -51,8 +51,8 @@ public class AgentService {
         AgentModel agent = findById(uuid);
         ModelModel model = modelService.findByUUID(form.getModelUUID());
 
-        agent.setName(model.getName());
-        agent.setDescription(model.getDescription());
+        agent.setName(form.getName());
+        agent.setDescription(form.getDescription());
         agent.setIcon(form.getIcon());
         agent.setPrompt(form.getPrompt());
         agent.setModel(model);

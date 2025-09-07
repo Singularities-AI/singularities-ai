@@ -23,6 +23,10 @@ public class PromptService {
     public Prompt createPromptWithContextsAndHistories(ChatModel chat, String globalContext) {
         List<Message> messages = new ArrayList<>();
 
+        if (chat.getAgent() != null) {
+            messages.add(new SystemMessage("Prompt : " + chat.getAgent().getPrompt()));
+        }
+
         if (globalContext != null && !globalContext.trim().isEmpty()) {
             messages.add(new SystemMessage("User context : " + globalContext));
         }
