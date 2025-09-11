@@ -9,6 +9,27 @@ export const useAgentStore = defineStore('agent', {
   }),
 
   actions: {
+    async getByUUID(uuid: string): Promise<{ success: boolean, data?: Agent, message?: string }> {
+      const config = useRuntimeConfig()
+
+      try {
+        const response = await useSecureFetch<Agent>(
+          `${config.public.apiUrl}/web/agents/${uuid}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${useCookie('token').value}`,
+            },
+          },
+        )
+
+        return { success: true, data: response }
+      }
+      catch (error: any) {
+        return { success: false, message: error.message }
+      }
+    },
+
     async list(pageNumber = 0, pageSize = 20, append = false): Promise<{ success: boolean, message?: string }> {
       const config = useRuntimeConfig()
 

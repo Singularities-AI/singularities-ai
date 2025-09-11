@@ -22,6 +22,7 @@ public class AgentMapper {
         dto.setModel(modelMapper.toDto(model.getModel()));
         dto.setName(model.getName());
         dto.setDescription(model.getDescription());
+        dto.setPrompt(model.getPrompt());
         dto.setIcon(model.getIcon());
         return abstractMapper.completeAbstractDto(model, dto);
     }

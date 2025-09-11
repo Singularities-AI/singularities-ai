@@ -8,4 +8,5 @@ export interface Agent {
   model: Model
   name: string
   description: string
+  prompt: string
 }

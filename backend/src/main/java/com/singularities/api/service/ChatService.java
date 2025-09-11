@@ -10,6 +10,7 @@ import com.singularities.api.dto.request.ChatUpdateRequestDto;
 import com.singularities.api.dto.request.MessageRequestDto;
 import com.singularities.api.exception.SingularitiesAIForbiddenException;
 import com.singularities.api.exception.SingularitiesAINotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -95,6 +96,7 @@ public class ChatService {
     }
 
 
+    @Transactional
     public MessageModel addMessageToChat(UserModel user, MessageRequestDto form) {
         ModelModel model = modelService.findByUUID(form.getModelUUID());
 

@@ -16,4 +16,5 @@ public class AgentResponseDto extends AbstractDto {
     private String icon;
     private String name;
     private String description;
+    private String prompt;
 }

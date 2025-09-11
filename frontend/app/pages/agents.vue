@@ -4,7 +4,6 @@ import Header from '~/components/Header.vue'
 import Sidebar from '~/components/Sidebar.vue'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
 
@@ -59,11 +58,6 @@ onMounted(async () => {
           <p class="max-w-xl text-muted-foreground">
             Agents are personalized chatbots that combine specific instructions, additional knowledge bases, and specialized skills.
           </p>
-          <Input
-            type="text"
-            placeholder="Search agents"
-            class="max-w-md w-full"
-          />
         </div>
 
         <!-- cards -->
@@ -71,7 +65,7 @@ onMounted(async () => {
           <Card
             v-for="agent in agentStore.agents"
             :key="agent.id"
-            class="rounded-xl"
+            class="h-full flex flex-col rounded-xl"
           >
             <CardHeader class="flex flex-row items-center justify-between">
               <Icon
@@ -81,24 +75,30 @@ onMounted(async () => {
               />
             </CardHeader>
 
-            <CardContent class="h-full flex flex-col">
+            <CardContent class="flex flex-1 flex-col">
               <div>
-                <CardTitle class="text-lg font-semibold">
+                <CardTitle class="break-words text-lg font-semibold">
                   {{ agent.name }}
                 </CardTitle>
-                <p class="text-sm text-muted-foreground">
+                <p class="break-words text-sm text-muted-foreground">
                   {{ agent.description }}
                 </p>
-                <p class="mt-3 text-sm text-muted-foreground">
+                <p class="mt-3 flex items-center gap-1 text-sm text-muted-foreground">
                   <Icon name="lucide:brain" class="size-5" />
                   {{ agent.model.name }}
                 </p>
               </div>
 
-              <Button size="sm" class="mt-3 self-end gap-1.5 bg-black text-white" @click="router.push(`/chats/new?agent=${agent.id}`)">
-                Start Chat
-                <Icon name="lucide:send-horizontal" class="size-3.5" />
-              </Button>
+              <div class="mt-auto flex justify-end">
+                <Button
+                  size="sm"
+                  class="gap-1.5 bg-black text-white"
+                  @click="router.push(`/chats/new?agent=${agent.id}`)"
+                >
+                  Start Chat
+                  <Icon name="lucide:send-horizontal" class="size-3.5" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

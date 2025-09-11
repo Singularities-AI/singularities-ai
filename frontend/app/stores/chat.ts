@@ -56,6 +56,7 @@ export const useChatStore = defineStore('chat', {
       content: string,
       modelUUID: string,
       context: string | null,
+      agentUUID: string | null,
     ): Promise<{ success: boolean, data?: MessageResponse, message?: string }> {
       const config = useRuntimeConfig()
 
@@ -64,7 +65,7 @@ export const useChatStore = defineStore('chat', {
           `${config.public.apiUrl}/web/chats/messages`,
           {
             method: 'POST',
-            body: JSON.stringify({ chatUUID, content, modelUUID, context }),
+            body: JSON.stringify({ chatUUID, content, modelUUID, context, agentUUID }),
             headers: {
               'Authorization': `Bearer ${useCookie('token').value}`,
               'Content-Type': 'application/json',

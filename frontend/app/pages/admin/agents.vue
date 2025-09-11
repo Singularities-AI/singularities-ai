@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
+import * as z from 'zod'
+import { toTypedSchema } from '@vee-validate/zod'
 import { useModelStore } from '~/stores/model'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
@@ -34,6 +36,16 @@ const isSubmitting = ref(false)
 const isEditing = ref(false)
 const agentToEdit = ref<any | null>(null)
 
+const agentFormSchema = toTypedSchema(
+  z.object({
+    icon: z.string().min(1, 'Icon is required.').max(254, 'Icon must be at most 254 characters.'),
+    name: z.string().min(10, 'Name must be at least 10 characters.').max(45, 'Name must be at most 45 characters.'),
+    description: z.string().min(30, 'Description must be at least 30 characters.').max(240, 'Description must be at most 240 characters.'),
+    prompt: z.string().min(75, 'Prompt must be at least 75 characters.').max(4000, 'Prompt must be at most 4000 characters.'),
+    modelUUID: z.string().min(1, 'A model must be selected.'),
+  }),
+)
+
 const emptyForm = {
   icon: '',
   name: '',
@@ -51,7 +63,7 @@ watch(showCreateAgentDialog, (open) => {
   }
 })
 
-async function onSubmit() {
+async function onSubmit(values: typeof emptyForm) {
   if (isSubmitting.value)
     return
 
@@ -59,9 +71,9 @@ async function onSubmit() {
   let result
 
   if (isEditing.value && agentToEdit.value)
-    result = await agentStore.update(agentToEdit.value.id, createForm.value)
+    result = await agentStore.update(agentToEdit.value.id, values)
   else
-    result = await agentStore.create(createForm.value)
+    result = await agentStore.create(values)
 
   const { success, message } = result
 
@@ -159,45 +171,54 @@ onUnmounted(() => {
           </DialogHeader>
 
           <Form
+            :validation-schema="agentFormSchema"
             :initial-values="createForm" class="mt-2 space-y-3"
-            @submit="onSubmit()"
+            @submit="onSubmit"
           >
-            <FormField name="icon">
+            <FormField v-slot="{ componentField }" name="icon">
               <FormItem class="flex flex-col">
                 <FormLabel>Icon</FormLabel>
                 <FormControl class="mt-1">
-                  <IconPicker v-model="createForm.icon" />
+                  <IconPicker v-bind="componentField" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             </FormField>
 
-            <FormField name="name">
+            <FormField v-slot="{ componentField }" name="name">
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input v-model="createForm.name" placeholder="Ex: Marketing Expert" type="text" />
+                  <Input
+                    type="text"
+                    placeholder="Ex: Marketing Expert"
+                    v-bind="componentField"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             </FormField>
 
-            <FormField name="description">
+            <FormField v-slot="{ componentField }" name="description">
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea v-model="createForm.description" placeholder="Ex: An AI agent specializing in marketing strategy and automation, optimizing campaigns and audiences." class="min-h-[4.5rem]" />
+                  <Textarea
+                    class="min-h-[4.5rem]"
+                    placeholder="Ex: An AI agent specializing in marketing strategy and automation, optimizing campaigns and audiences."
+                    v-bind="componentField"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             </FormField>
 
-            <FormField name="model">
+            <FormField v-slot="{ componentField }" name="modelUUID">
               <FormItem>
                 <FormLabel>Model</FormLabel>
                 <FormControl>
-                  <Select v-model="createForm.modelUUID">
-                    <SelectTrigger id="model" class="items-start [&_[data-description]]:hidden">
+                  <Select v-bind="componentField">
+                    <SelectTrigger id="model">
                       <SelectValue placeholder="Select a model" />
                     </SelectTrigger>
                     <SelectContent>
@@ -218,11 +239,15 @@ onUnmounted(() => {
               </FormItem>
             </FormField>
 
-            <FormField name="prompt">
+            <FormField v-slot="{ componentField }" name="prompt">
               <FormItem>
                 <FormLabel>Prompt</FormLabel>
                 <FormControl>
-                  <Textarea v-model="createForm.prompt" placeholder="Ex: You are a marketing expert specializing in digital acquisition. Analyze my product and propose a comprehensive strategy (SEO, social media, email marketing, and paid advertising) to increase visibility and conversions. Provide concrete, quantified actions prioritized by importance." class="min-h-[9.5rem]" />
+                  <Textarea
+                    class="min-h-[9.5rem]"
+                    placeholder="Ex: You are a marketing expert..."
+                    v-bind="componentField"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -251,7 +276,7 @@ onUnmounted(() => {
       </Dialog>
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-3 sm:grid-cols-2">
+    <div class="grid gap-6 lg:grid-cols-2 sm:grid-cols-2">
       <Card
         v-for="agent in agentStore.agents"
         :key="agent.id"
@@ -267,13 +292,13 @@ onUnmounted(() => {
 
         <CardContent class="flex flex-1 flex-col">
           <div>
-            <CardTitle class="text-lg font-semibold">
+            <CardTitle class="break-words text-lg font-semibold">
               {{ agent.name }}
             </CardTitle>
-            <p class="mt-1 text-sm text-muted-foreground">
+            <p class="mt-1 break-words text-sm text-muted-foreground">
               {{ agent.description }}
             </p>
-            <p class="mt-3 text-sm text-muted-foreground">
+            <p class="mt-3 flex items-center gap-1 text-sm text-muted-foreground">
               <Icon name="lucide:brain" class="size-5" />
               {{ agent.model.name }}
             </p>
