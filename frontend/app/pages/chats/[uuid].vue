@@ -147,17 +147,20 @@ function newChat() {
               </legend>
 
               <div class="max-h-[calc(100vh-400px)] flex flex-col gap-1 overflow-y-auto scroll-smooth">
-                <div
-                  class="group flex items-center justify-between rounded-md hover:cursor-pointer hover:bg-muted"
-                  @click="newChat()"
-                >
-                  <Button
-                    variant="ghost"
-                    size="icon"
+                <div class="max-h-[calc(100vh-400px)] flex flex-col gap-1 overflow-y-auto scroll-smooth">
+                  <div
+                    class="group flex items-center justify-between rounded-md hover:cursor-pointer hover:bg-muted"
+                    @click="newChat()"
                   >
-                    <Icon name="lucide:square-pen" class="ml-2 mr-2 size-4" />
-                    <span class="truncate text-sm text-black">New chat</span>
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      class="flex items-center gap-2"
+                    >
+                      <Icon name="lucide:square-pen" class="size-4" />
+                      <span class="truncate text-sm text-black">New chat</span>
+                    </Button>
+                  </div>
                 </div>
 
                 <Separator />
@@ -280,7 +283,7 @@ function newChat() {
             </Badge>
 
             <!-- messages -->
-            <div class="flex flex-col px-2 pt-10 space-y-4">
+            <div class="flex flex-col px-2 pt-13 space-y-4">
               <div
                 v-for="(msg, idx) in messages" :key="idx" class="p-2"
                 :class="{
