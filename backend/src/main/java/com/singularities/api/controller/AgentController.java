@@ -4,6 +4,7 @@ import com.singularities.api.dto.request.AgentRequestDto;
 import com.singularities.api.dto.response.AgentResponseDto;
 import com.singularities.api.mapper.AgentMapper;
 import com.singularities.api.service.AgentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,14 +44,14 @@ public class AgentController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
-    public AgentResponseDto create(@RequestBody AgentRequestDto form) {
+    public AgentResponseDto create(@RequestBody @Valid AgentRequestDto form) {
         return agentMapper.toDto(agentService.create(form));
     }
 
     @PutMapping("/{uuid}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
-    public AgentResponseDto update(@PathVariable UUID uuid, @RequestBody AgentRequestDto form) {
+    public AgentResponseDto update(@PathVariable UUID uuid, @RequestBody @Valid AgentRequestDto form) {
         return agentMapper.toDto(agentService.update(uuid, form));
     }
 
