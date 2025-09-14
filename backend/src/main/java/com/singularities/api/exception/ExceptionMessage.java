@@ -38,4 +38,7 @@ public class ExceptionMessage {
     //SETTINGS --
     public static final String SETTING_NOT_FOUND = "Setting not found: %s.";
 
+    //AGENTS __
+    public static final String AGENT_NOT_FOUND = "Agent not found: %s.";
+
 }

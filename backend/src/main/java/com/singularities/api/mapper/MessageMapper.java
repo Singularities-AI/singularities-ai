@@ -9,13 +9,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MessageMapper {
 
+    private final AbstractMapper<MessageModel, MessageResponseDto> abstractMapper;
+
     public MessageResponseDto toDto(MessageModel model) {
         MessageResponseDto dto = new MessageResponseDto();
         dto.setChatUUID(model.getChat().getId());
         dto.setId(model.getId());
         dto.setContent(model.getContent());
         dto.setRole(model.getRole());
-        dto.setCreatedAt(model.getCreatedAt());
-        return dto;
+        return abstractMapper.completeAbstractDto(model, dto);
     }
 }

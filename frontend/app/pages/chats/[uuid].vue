@@ -4,22 +4,24 @@ import Header from '~/components/Header.vue'
 import Sidebar from '~/components/Sidebar.vue'
 import { useModelStore } from '~/stores/model'
 import { useChatStore } from '~/stores/chat'
-import type { Model } from '~/interfaces/Model'
+import type { Agent } from '~/interfaces/Agent'
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
 
 const router = useRouter()
-
+const route = useRoute()
 const modelStore = useModelStore()
 const chatStore = useChatStore()
+const agentStore = useAgentStore()
 
-const availableModels = ref<Model[]>([])
 const selectedModel = ref<string>('')
 const context = ref<string>('')
 const selectedChatId = ref<string | null>(null)
 const inputMessage = ref('')
 const messages = ref<Message[]>([])
 const loading = ref<boolean>(false)
+
+const agent = ref<Agent>()
 
 interface Message {
   from: 'USER' | 'AGENT' | 'ERROR'
@@ -30,9 +32,8 @@ interface Message {
 onMounted(async () => {
   await Promise.all([
     // load models available
-    modelStore.listAvailable().then((result) => {
-      availableModels.value = result
-      const defaultModel = availableModels.value.find(m => m.default)
+    modelStore.listAvailable().then(() => {
+      const defaultModel = modelStore.modelsAvailable.find(m => m.default)
       if (defaultModel)
         selectedModel.value = defaultModel.id
     }),
@@ -42,17 +43,28 @@ onMounted(async () => {
   ])
 
   // load chat if uuid is present in url
-  const route = useRoute()
   const chatUUID = route.params.uuid as string | undefined
   if (chatUUID && chatUUID !== 'new') {
     selectedChatId.value = chatUUID
-    const previousMessages = await chatStore.listMessages(chatUUID)
+    await chatStore.listMessages(chatUUID).then((res) => {
+      messages.value = res.data?.map(msg => ({
+        from: msg.role === 'USER' ? 'USER' : 'AGENT',
+        text: msg.content,
+      })) || []
+    })
 
-    messages.value = previousMessages.map(msg => ({
-      from: msg.role === 'USER' ? 'USER' : 'AGENT',
-      text: msg.content,
-    }))
+    // load agent by current chat
+    const chat = chatStore.chats.find(c => c.id === chatUUID)
+    if (chat) {
+      if (chat.agent)
+        agent.value = chat.agent
+    }
   }
+
+  // load agent if agent uuid is present in url
+  const agentUUID = route.query.agent as string | undefined
+  if (agentUUID)
+    agent.value = (await agentStore.getByUUID(agentUUID)).data
 })
 
 async function sendMessage() {
@@ -74,30 +86,28 @@ async function sendMessage() {
 
   try {
     loading.value = true
-    const response = await chatStore.sendMessage(
+
+    const res = await chatStore.sendMessage(
       selectedChatId.value,
       userText,
       selectedModel.value,
       context.value,
+      agent.value?.id || null,
     )
-    loading.value = false
 
-    if (response && response.content) {
-      messages.value.push({ from: 'AGENT', text: response.content })
+    messages.value.push({ from: 'AGENT', text: res.data?.content || '' })
 
-      if (!selectedChatId.value) {
-        selectedChatId.value = response.chatUUID
-        router.push(`/chats/${response.chatUUID}`)
-        await chatStore.list()
-      }
-    }
-    else {
-      // in case of a handled error an error message is displayed.
-      messages.value.push({ from: 'ERROR', text: userText, retry })
+    if (!selectedChatId.value) {
+      selectedChatId.value = res.data?.chatUUID || null
+      router.push(`/chats/${res.data?.chatUUID}`)
+      await chatStore.list()
     }
   }
   catch (error) {
     messages.value.push({ from: 'ERROR', text: userText, retry })
+  }
+  finally {
+    loading.value = false
   }
 }
 
@@ -137,17 +147,20 @@ function newChat() {
               </legend>
 
               <div class="max-h-[calc(100vh-400px)] flex flex-col gap-1 overflow-y-auto scroll-smooth">
-                <div
-                  class="group flex items-center justify-between rounded-md hover:cursor-pointer hover:bg-muted"
-                  @click="newChat()"
-                >
-                  <Button
-                    variant="ghost"
-                    size="icon"
+                <div class="max-h-[calc(100vh-400px)] flex flex-col gap-1 overflow-y-auto scroll-smooth">
+                  <div
+                    class="group flex items-center justify-between rounded-md hover:cursor-pointer hover:bg-muted"
+                    @click="newChat()"
                   >
-                    <Icon name="lucide:square-pen" class="ml-2 mr-2 size-4" />
-                    <span class="truncate text-sm text-black">New chat</span>
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      class="flex items-center gap-2"
+                    >
+                      <Icon name="lucide:square-pen" class="size-4" />
+                      <span class="truncate text-sm text-black">New chat</span>
+                    </Button>
+                  </div>
                 </div>
 
                 <Separator />
@@ -202,7 +215,7 @@ function newChat() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem
-                      v-for="model in availableModels"
+                      v-for="model in modelStore.modelsAvailable"
                       :key="model.id"
                       :value="model.id"
                     >
@@ -230,60 +243,88 @@ function newChat() {
 
         <!-- chat box -->
         <div class="relative h-full min-h-[50vh] flex flex-col border rounded-xl p-4">
-          <!-- messages -->
-          <div class="mb-4 max-h-[calc(100vh-200px)] flex-1 overflow-x-hidden overflow-y-auto scroll-smooth space-y-4">
-            <div
-              v-for="(msg, idx) in messages"
-              :key="idx"
-              class="p-2"
-              :class="{
-                'ml-auto w-[80%] rounded-lg bg-primary text-black': msg.from === 'USER',
-                'w-full rounded-lg bg-muted': msg.from === 'AGENT',
-                'w-[100%] rounded-lg bg-red-400 text-black': msg.from === 'ERROR',
-              }"
-            >
-              <template v-if="msg.from === 'ERROR'">
-                <div class="mx-3 w-full flex items-center justify-between">
-                  <div class="text-sm">
-                    An error has occurred. Please try again.
-                  </div>
-                  <Button variant="secondary" size="sm" class="mr-3 flex items-center gap-2" @click="msg.retry?.()">
-                    Retry
-                    <Icon name="lucide:refresh-ccw" class="size-4" />
-                  </Button>
-                </div>
-              </template>
-
-              <template v-else>
-                <div class="mx-3 text-sm">
-                  {{ msg.text }}
-                </div>
-              </template>
+          <div class="relative flex-1 overflow-x-hidden overflow-y-auto scroll-smooth">
+            <!-- agent center -->
+            <div v-if="messages.length === 0 && agent" class="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4">
+              <Icon
+                :name="agent?.icon || 'lucide:brain'"
+                class="h-20 w-20 text-muted-foreground"
+              />
+              <div>
+                <h2 class="text-xl font-semibold">
+                  {{ agent?.name }}
+                </h2>
+                <p class="text-sm text-muted-foreground">
+                  {{ agent?.model?.name }}
+                </p>
+                <p class="mt-2 max-w-md text-sm text-muted-foreground">
+                  {{ agent?.description }}
+                </p>
+              </div>
             </div>
 
-            <div v-if="loading === true" class="w-full rounded-lg bg-muted p-2">
-              <div class="mx-3 w-full flex text-sm">
-                <svg class="mr-2 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Generating your response...
+            <Badge variant="outline" class="absolute left-3 top-3 flex items-center gap-2 px-3 py-1">
+              <Icon
+                v-if="agent"
+                name="lucide:bot"
+                class="h-4 w-4"
+              />
+              <Icon
+                v-else
+                name="lucide:square-terminal"
+                class="h-4 w-4"
+              />
+              <span v-if="agent" class="text-sm font-medium">
+                {{ agent?.name }}
+              </span>
+              <span v-else class="text-sm font-medium">
+                Basic Chat
+              </span>
+            </Badge>
+
+            <!-- messages -->
+            <div class="flex flex-col px-2 pt-13 space-y-4">
+              <div
+                v-for="(msg, idx) in messages" :key="idx" class="p-2"
+                :class="{
+                  'ml-auto w-[80%] rounded-lg bg-primary text-black': msg.from === 'USER',
+                  'w-full rounded-lg bg-muted': msg.from === 'AGENT',
+                  'w-[100%] rounded-lg bg-red-400 text-black': msg.from === 'ERROR',
+                }"
+              >
+                <template v-if="msg.from === 'ERROR'">
+                  <div class="mx-3 w-full flex items-center justify-between">
+                    <div class="text-sm">
+                      An error has occurred. Please try again.
+                    </div>
+                    <Button variant="secondary" size="sm" class="mr-3 flex items-center gap-2" @click="msg.retry?.()">
+                      Retry <Icon name="lucide:refresh-ccw" class="size-4" />
+                    </Button>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="mx-3 text-sm">
+                    {{ msg.text }}
+                  </div>
+                </template>
+              </div>
+
+              <div v-if="loading === true" class="w-full rounded-lg bg-muted p-2">
+                <div class="mx-3 w-full flex text-sm">
+                  <svg class="mr-2 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Generating your response...
+                </div>
               </div>
             </div>
           </div>
 
           <!-- input -->
-          <form
-            class="relative overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring"
-            @submit.prevent="sendMessage"
-          >
+          <form class="relative overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring" @submit.prevent="sendMessage">
             <Label for="message" class="sr-only">Message</Label>
-            <Textarea
-              id="message"
-              v-model="inputMessage"
-              placeholder="Type your message here..."
-              class="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
-            />
+            <Textarea id="message" v-model="inputMessage" placeholder="Type your message here..." class="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0" />
             <div class="flex items-center p-3 pt-0">
               <Tooltip>
                 <TooltipTrigger as-child>
@@ -297,8 +338,7 @@ function newChat() {
                 </TooltipContent>
               </Tooltip>
               <Button type="submit" size="sm" class="ml-auto gap-1.5 bg-black">
-                Send Message
-                <Icon name="lucide:corner-down-left" class="size-3.5" />
+                Send Message <Icon name="lucide:corner-down-left" class="size-3.5" />
               </Button>
             </div>
           </form>

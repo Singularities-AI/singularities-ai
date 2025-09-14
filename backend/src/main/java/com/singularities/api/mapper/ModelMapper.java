@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ModelMapper {
 
+    private final AbstractMapper<ModelModel, ModelResponseDto> abstractMapper;
+
     public ModelResponseDto toDto(ModelModel model) {
         ModelResponseDto dto = new ModelResponseDto();
         dto.setId(model.getId());
@@ -17,6 +19,6 @@ public class ModelMapper {
         dto.setDownloading(model.isDownloading());
         dto.setDownload(model.isDownload());
         dto.setDefault(model.isDefault());
-        return dto;
+        return abstractMapper.completeAbstractDto(model, dto);
     }
 }

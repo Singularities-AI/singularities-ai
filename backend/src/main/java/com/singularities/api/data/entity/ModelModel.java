@@ -1,20 +1,16 @@
 package com.singularities.api.data.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "models")
-public class ModelModel {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class ModelModel extends AbstractModel {
 
     @Column
     private String name;

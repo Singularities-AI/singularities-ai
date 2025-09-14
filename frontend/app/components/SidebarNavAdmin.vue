@@ -30,8 +30,8 @@ const sidebarNavItems: Item[] = [
     href: '/admin/models',
   },
   {
-    title: 'Agents (soon)',
-    href: '#',
+    title: 'Agents',
+    href: '/admin/agents',
   },
   {
     title: 'Knownledge bases (soon)',

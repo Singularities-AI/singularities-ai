@@ -30,6 +30,7 @@ public class ModelService {
         );
     }
 
+
     public List<ModelModel> findAll() {
         return modelRepository.findAll();
     }

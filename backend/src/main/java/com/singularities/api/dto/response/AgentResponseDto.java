@@ -5,13 +5,16 @@ import com.singularities.api.dto.AbstractDto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChatResponseDto extends AbstractDto {
+public class AgentResponseDto extends AbstractDto {
 
-    private String title;
-    private String context;
     private ModelResponseDto model;
-    private AgentResponseDto agent;
+    private String icon;
+    private String name;
+    private String description;
+    private String prompt;
 }

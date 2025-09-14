@@ -1,0 +1,64 @@
+package com.singularities.api.controller;
+
+import com.singularities.api.dto.request.AgentRequestDto;
+import com.singularities.api.dto.response.AgentResponseDto;
+import com.singularities.api.mapper.AgentMapper;
+import com.singularities.api.service.AgentService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/web/agents")
+@CrossOrigin(origins = "*", maxAge = 3600)
+public class AgentController {
+
+    private final AgentService agentService;
+    private final AgentMapper agentMapper;
+
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER')")
+    public Page<AgentResponseDto> list(Pageable pageable) {
+        return agentMapper.toDto(agentService.findAll(pageable));
+    }
+
+    @GetMapping("/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER')")
+    public AgentResponseDto getByUUID(@PathVariable UUID uuid) {
+        return agentMapper.toDto(agentService.findById(uuid));
+    }
+
+
+    //Admin --
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public AgentResponseDto create(@RequestBody @Valid AgentRequestDto form) {
+        return agentMapper.toDto(agentService.create(form));
+    }
+
+    @PutMapping("/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public AgentResponseDto update(@PathVariable UUID uuid, @RequestBody @Valid AgentRequestDto form) {
+        return agentMapper.toDto(agentService.update(uuid, form));
+    }
+
+    @DeleteMapping("/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public void delete(@PathVariable UUID uuid) {
+        agentService.delete(uuid);
+    }
+}

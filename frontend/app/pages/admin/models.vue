@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useModelStore } from '~/stores/model'
 
-definePageMeta({
-  layout: 'admin',
-  middleware: 'auth',
-})
+definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const modelStore = useModelStore()
 
@@ -13,8 +10,8 @@ onMounted(async () => {
   await modelStore.list()
 })
 
-async function setAsDefault(id: string) {
-  const { success, message } = await modelStore.setDefault(id)
+async function setAsDefault(uuid: string) {
+  const { success, message } = await modelStore.setDefault(uuid)
   if (!success) {
     toast({
       title: 'Error',
@@ -30,8 +27,8 @@ async function setAsDefault(id: string) {
   }
 }
 
-async function download(id: string) {
-  const { success, message } = await modelStore.download(id)
+async function download(uuid: string) {
+  const { success, message } = await modelStore.download(uuid)
   if (!success) {
     toast({
       title: 'Error',
@@ -47,8 +44,8 @@ async function download(id: string) {
   }
 }
 
-async function remove(id: string) {
-  const { success, message } = await modelStore.delete(id)
+async function remove(uuid: string) {
+  const { success, message } = await modelStore.delete(uuid)
   if (!success) {
     toast({
       title: 'Error',

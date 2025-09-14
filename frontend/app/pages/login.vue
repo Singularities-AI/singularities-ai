@@ -5,10 +5,7 @@ import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 
-definePageMeta({
-  layout: 'blank',
-  middleware: 'auth',
-})
+definePageMeta({ layout: 'blank', middleware: 'auth' })
 
 const router = useRouter()
 const authStore = useAuthStore()

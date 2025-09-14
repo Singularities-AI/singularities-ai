@@ -7,24 +7,23 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "messages")
-public class MessageModel extends AbstractModel {
-
-    @ManyToOne
-    @JoinColumn(name = "chat_id", nullable = false)
-    private ChatModel chat;
+@Table(name = "agents")
+public class AgentModel extends AbstractModel {
 
     @Column(nullable = false)
-    private String role;
+    private String icon;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String description;
 
     @Column(columnDefinition = "TEXT")
-    private String context;
+    private String prompt;
 
     @ManyToOne
     @JoinColumn(name = "model_id", nullable = false)
     private ModelModel model;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
 }
 

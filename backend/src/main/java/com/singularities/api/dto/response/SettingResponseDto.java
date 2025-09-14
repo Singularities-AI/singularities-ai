@@ -6,14 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SettingResponseDto extends AbstractDto {
 
-    private UUID id;
     private String key;
     private boolean isMultiple;
     private List<String> values;

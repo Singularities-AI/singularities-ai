@@ -16,6 +16,7 @@ import java.util.UUID;
 public class MessageRequestDto {
 
     private UUID chatUUID;
+    private UUID agentUUID;
 
     @NonNull
     @NotEmpty

@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import AccountForm from '~/components/AccountForm.vue'
 
-definePageMeta({
-  layout: 'blank',
-  middleware: 'auth',
-})
+definePageMeta({ layout: 'blank', middleware: 'auth' })
 </script>
 
 <template>
