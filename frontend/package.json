@@ -61,7 +61,7 @@
     "eslint": "^9.2.0",
     "eslint-plugin-format": "^0.1.1",
     "iconify-icon": "^2.1.0",
-    "nuxt": "3.12.4",
+    "nuxt": "3.19.0",
     "pinia": "^2.1.7",
     "tailwind-merge": "^2.3.0",
     "typescript": "5.4.5",
