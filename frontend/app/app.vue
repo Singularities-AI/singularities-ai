@@ -9,10 +9,18 @@ import { ConfigProvider } from 'radix-vue'
 import { appName } from '@/config/site'
 import Toaster from '@/components/ui/toast/Toaster.vue'
 
+const colorMode = useColorMode()
+
 const useIdFunction = () => useId()
 
 useHead({
   title: appName,
+})
+
+onMounted(() => {
+  // Force light mode
+  colorMode.preference = 'light'
+  colorMode.value = 'light'
 })
 </script>
 

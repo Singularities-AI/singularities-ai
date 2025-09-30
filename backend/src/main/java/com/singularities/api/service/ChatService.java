@@ -30,15 +30,15 @@ import static com.singularities.api.exception.ExceptionMessage.*;
 @RequiredArgsConstructor
 public class ChatService {
 
+    private final AgentService agentService;
     private final ModelService modelService;
     private final PromptService promptService;
     private final MessageService messageService;
+
     private final ChatRepository chatRepository;
 
     //SPRING AI
     private final org.springframework.ai.chat.model.ChatModel chatModelAI;
-    private final AgentService agentService;
-
 
     private ChatModel create(UserModel user, String firstMessage, ModelModel model, String context, UUID agentUUID) {
         ChatModel chatModel = new ChatModel();

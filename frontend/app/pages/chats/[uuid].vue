@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import type { MDCParserResult } from '@nuxtjs/mdc'
 import Header from '~/components/Header.vue'
 import Sidebar from '~/components/Sidebar.vue'
+import MDCContent from '~/components/MDCContent.vue'
 import { useModelStore } from '~/stores/model'
 import { useChatStore } from '~/stores/chat'
 import type { Agent } from '~/interfaces/Agent'
@@ -13,6 +15,7 @@ const route = useRoute()
 const modelStore = useModelStore()
 const chatStore = useChatStore()
 const agentStore = useAgentStore()
+const parse = useMarkdownParser()
 
 const selectedModel = ref<string>('')
 const context = ref<string>('')
@@ -27,6 +30,7 @@ interface Message {
   from: 'USER' | 'AGENT' | 'ERROR'
   text: string
   retry?: () => void
+  ast?: MDCParserResult | null
 }
 
 onMounted(async () => {
@@ -66,6 +70,14 @@ onMounted(async () => {
   if (agentUUID)
     agent.value = (await agentStore.getByUUID(agentUUID)).data
 })
+
+// parse messages to AST for rendering
+watch(messages, async (newMessages) => {
+  for (const msg of newMessages) {
+    if (msg.text && !msg.ast)
+      msg.ast = await parse(msg.text)
+  }
+}, { deep: true })
 
 async function sendMessage() {
   if (!inputMessage.value.trim())
@@ -242,7 +254,7 @@ function newChat() {
         </div>
 
         <!-- chat box -->
-        <div class="relative h-full min-h-[50vh] flex flex-col border rounded-xl p-4">
+        <div class="relative h-[calc(100vh-85px)] min-h-0 flex flex-1 flex-col overflow-y-auto border rounded-xl p-4">
           <div class="relative flex-1 overflow-x-hidden overflow-y-auto scroll-smooth">
             <!-- agent center -->
             <div v-if="messages.length === 0 && agent" class="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4">
@@ -288,7 +300,7 @@ function newChat() {
                 v-for="(msg, idx) in messages" :key="idx" class="p-2"
                 :class="{
                   'ml-auto w-[80%] rounded-lg bg-primary text-black': msg.from === 'USER',
-                  'w-full rounded-lg bg-muted': msg.from === 'AGENT',
+                  'w-full': msg.from === 'AGENT',
                   'w-[100%] rounded-lg bg-red-400 text-black': msg.from === 'ERROR',
                 }"
               >
@@ -302,11 +314,15 @@ function newChat() {
                     </Button>
                   </div>
                 </template>
-                <template v-else>
-                  <div class="mx-3 text-sm">
-                    {{ msg.text }}
-                  </div>
-                </template>
+
+                <MDCContent
+                  v-if="msg.ast?.body && msg.from === 'AGENT'"
+                  :ast="msg.ast"
+                  class="px-2 text-sm"
+                />
+                <div v-else class="mx-3 whitespace-pre-wrap text-sm">
+                  {{ msg.text }}
+                </div>
               </div>
 
               <div v-if="loading === true" class="w-full rounded-lg bg-muted p-2">

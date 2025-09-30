@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     './modules/shadcn',
     '@nuxt/content',
+    '@nuxtjs/mdc',
   ],
 
   debug: true,
