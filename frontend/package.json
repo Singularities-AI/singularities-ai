@@ -28,7 +28,6 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
-    "dompurify": "^3.2.7",
     "lodash": "^4.17.21",
     "magic-string": "^0.30.10",
     "radix-vue": "^1.9.1",

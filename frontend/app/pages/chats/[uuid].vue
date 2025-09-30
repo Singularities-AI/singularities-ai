@@ -254,7 +254,7 @@ function newChat() {
         </div>
 
         <!-- chat box -->
-        <div class="relative min-h-0 flex flex-1 flex-col border rounded-xl p-4">
+        <div class="relative h-[calc(100vh-85px)] min-h-0 flex flex-1 flex-col overflow-y-auto border rounded-xl p-4">
           <div class="relative flex-1 overflow-x-hidden overflow-y-auto scroll-smooth">
             <!-- agent center -->
             <div v-if="messages.length === 0 && agent" class="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4">
@@ -300,7 +300,7 @@ function newChat() {
                 v-for="(msg, idx) in messages" :key="idx" class="p-2"
                 :class="{
                   'ml-auto w-[80%] rounded-lg bg-primary text-black': msg.from === 'USER',
-                  'w-full rounded-lg bg-muted': msg.from === 'AGENT',
+                  'w-full': msg.from === 'AGENT',
                   'w-[100%] rounded-lg bg-red-400 text-black': msg.from === 'ERROR',
                 }"
               >
@@ -316,10 +316,13 @@ function newChat() {
                 </template>
 
                 <MDCContent
-                  v-if="msg.ast?.body"
+                  v-if="msg.ast?.body && msg.from === 'AGENT'"
                   :ast="msg.ast"
                   class="px-2 text-sm"
                 />
+                <div v-else class="mx-3 whitespace-pre-wrap text-sm">
+                  {{ msg.text }}
+                </div>
               </div>
 
               <div v-if="loading === true" class="w-full rounded-lg bg-muted p-2">
