@@ -10,7 +10,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
   <aside class="inset-y fixed left-0 z-20 h-full w-[55px] flex flex-col border-r">
     <div class="border-b p-2">
       <Button variant="outline" size="icon" aria-label="Home">
-        <img src="public/favicon.ico">
+        <img src="/favicon.ico">
       </Button>
     </div>
     <nav class="grid gap-1 p-2">

@@ -46,7 +46,7 @@ async function onSubmit(values: { email: string }) {
   <div class="relative w-full lg:grid lg:grid-cols-2">
     <div class="absolute left-6 top-6 z-10">
       <a href="/" class="flex items-center space-x-3">
-        <img src="public/favicon.ico" class="h-10 w-10">
+        <img src="/favicon.ico" class="h-10 w-10">
         <span class="text-xl" style="font-family: 'Space Mono', monospace;">
           Singularities AI
         </span>
@@ -97,7 +97,7 @@ async function onSubmit(values: { email: string }) {
     <div class="hidden h-screen w-full bg-black opacity-90 lg:flex">
       <video
         class="h-full w-full"
-        src="public/animation.mp4"
+        src="/animation.mp4"
         autoplay
         muted
         loop
