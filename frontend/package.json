@@ -54,6 +54,7 @@
     "@nuxtjs/tailwindcss": "^6.12.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.5.1",
+    "@playwright/test": "^1.55.1",
     "@types/node": "^20.12.12",
     "@unocss/eslint-config": "^0.60.0",
     "@unocss/nuxt": "0.61.5",
