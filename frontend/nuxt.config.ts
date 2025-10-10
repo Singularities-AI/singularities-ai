@@ -14,12 +14,21 @@ export default defineNuxtConfig({
     './modules/shadcn',
     '@nuxt/content',
     '@nuxtjs/mdc',
+    '@nuxtjs/i18n',
   ],
 
   debug: true,
 
   devtools: {
     enabled: false,
+  },
+
+  i18n: {
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', name: 'English', file: 'en.json' },
+      { code: 'fr', name: 'French', file: 'fr.json' },
+    ],
   },
 
   future: {

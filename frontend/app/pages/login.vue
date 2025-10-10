@@ -7,6 +7,7 @@ import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
 
+const { t } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
 
