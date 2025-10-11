@@ -232,7 +232,8 @@ function newChat() {
                       :value="model.id"
                     >
                       <div class="flex items-start gap-3 text-muted-foreground">
-                        <Icon name="lucide:brain" class="size-5" />
+                        <Icon v-if="model.icon" :name="model.icon" class="size-5" />
+                        <Icon v-else name="lucide:brain" class="size-5" />
                         <p>{{ model.name }}</p>
                       </div>
                     </SelectItem>

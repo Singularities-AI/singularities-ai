@@ -14,6 +14,7 @@ public class ModelMapper {
     public ModelResponseDto toDto(ModelModel model) {
         ModelResponseDto dto = new ModelResponseDto();
         dto.setId(model.getId());
+        dto.setIcon(model.getIcon());
         dto.setName(model.getName());
         dto.setDescription(model.getDescription());
         dto.setDownloading(model.isDownloading());

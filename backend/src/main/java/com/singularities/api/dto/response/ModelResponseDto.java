@@ -10,6 +10,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ModelResponseDto extends AbstractDto {
 
+    private String icon;
     private String name;
     private String description;
     private boolean isDownloading;

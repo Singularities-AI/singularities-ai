@@ -3,7 +3,7 @@
   "signupMessage": "Sign up to initiate your singularity.",
   "loginCodeMessage": "A login code will be sent to you by email.",
   "emailLabel": "Email",
-  "emailPlaceholder": "john@example.com",
+  "emailPlaceholder": "johnexample.com",
   "loadingMessage": "Loading...",
   "continueButton": "Continue with email"
 }

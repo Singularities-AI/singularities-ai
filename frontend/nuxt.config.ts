@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxtjs/mdc',
     '@nuxtjs/i18n',
+    '@nuxt/icon',
   ],
 
   debug: true,

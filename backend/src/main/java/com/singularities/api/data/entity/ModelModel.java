@@ -16,6 +16,9 @@ public class ModelModel extends AbstractModel {
     private String name;
 
     @Column(length = 50)
+    private String icon; //use iconify icon
+
+    @Column(length = 50)
     private String code;
 
     @Column(columnDefinition = "TEXT")
