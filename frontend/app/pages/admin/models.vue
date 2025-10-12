@@ -73,6 +73,8 @@ async function remove(uuid: string) {
         <div class="flex items-start justify-between">
           <div>
             <h3 class="flex items-center gap-2 font-semibold">
+              <Icon v-if="model.icon" :name="model.icon" class="size-5" />
+              <Icon v-else name="lucide:brain" class="size-5" />
               {{ model.name }}
               <Icon
                 v-if="model.download"
