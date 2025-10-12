@@ -32,7 +32,7 @@ const newDomain = ref('')
 const domainError = ref('')
 
 const domainSchema = z.string().regex(
-  /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/,
+  /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i,
   'Please enter a valid domain (e.g., google.com)',
 )
 
@@ -131,7 +131,7 @@ async function removeDomain(domain: string) {
     <div class="relative flex flex-col gap-4">
       <div class="flex items-center justify-between">
         <h1 class="text-xl font-semibold">
-          Users
+          Users | {{ userStore.page?.totalElements || 0 }}
         </h1>
 
         <Dialog v-model:open="showDomainDialog">
