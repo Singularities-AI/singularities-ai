@@ -39,6 +39,7 @@ public class ChatService {
 
     //SPRING AI
     private final org.springframework.ai.chat.model.ChatModel chatModelAI;
+    private final GenerationService generationService;
 
     private ChatModel create(UserModel user, String firstMessage, ModelModel model, String context, UUID agentUUID) {
         ChatModel chatModel = new ChatModel();
@@ -50,6 +51,10 @@ public class ChatService {
         chatModel.setModel(model);
         chatModel.setContext(context);
         chatModel.setTitle(firstMessage.length() > 30 ? firstMessage.substring(0, 30) : firstMessage);
+
+        //run async title generation
+        generationService.genAndSetChatTitleFromFirstMessage(chatModel, firstMessage);
+
         return chatRepository.save(chatModel);
     }
 

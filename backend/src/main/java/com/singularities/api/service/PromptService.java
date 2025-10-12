@@ -1,6 +1,7 @@
 package com.singularities.api.service;
 
 import com.singularities.api.data.entity.ChatModel;
+import com.singularities.api.data.entity.ModelModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -93,6 +94,16 @@ public class PromptService {
 
         //use chat ollama model
         OllamaOptions options = OllamaOptions.builder().model(chat.getModel().getCode()).build();
+        return new Prompt(messages, options);
+    }
+
+    public Prompt createChatTitleFromFirstMessagePrompt(ModelModel model, String firstMessage) {
+        List<Message> messages = new ArrayList<>();
+        String instruction = "Make a 5-6 word conversation title from the first message, keeping the user's language.";
+        messages.add(new SystemMessage(instruction));
+        messages.add(new UserMessage("First message : " + firstMessage));
+
+        OllamaOptions options = OllamaOptions.builder().model(model.getCode()).build();
         return new Prompt(messages, options);
     }
 }
