@@ -65,6 +65,10 @@ async function remove(uuid: string) {
 <template>
   <main class="grid flex-1 gap-4 overflow-auto p-4 lg:grid-cols-2">
     <div class="relative flex flex-col gap-4">
+      <h1 class="text-xl font-semibold">
+        Models | {{ modelStore.models?.length || 0 }}
+      </h1>
+
       <div
         v-for="model in modelStore.models"
         :key="model.id"
