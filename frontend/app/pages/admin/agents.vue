@@ -153,7 +153,7 @@ onUnmounted(() => {
   <div class="relative flex flex-col gap-4">
     <div class="flex items-center justify-between">
       <h1 class="text-xl font-semibold">
-        Agents
+        Agents | {{ agentStore.page?.totalElements || 0 }}
       </h1>
 
       <Dialog v-model:open="showCreateAgentDialog">
