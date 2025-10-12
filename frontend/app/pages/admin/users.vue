@@ -187,6 +187,7 @@ async function removeDomain(domain: string) {
             <TableHead>UUID</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Roles</TableHead>
+            <TableHead>Last Login</TableHead>
             <TableHead class="text-right">
               Actions
             </TableHead>
@@ -215,6 +216,16 @@ async function removeDomain(domain: string) {
                 </Badge>
               </template>
             </TableCell>
+
+            <TableCell>
+              <span v-if="user.lastLogin">
+                {{ new Date(user.lastLogin).toLocaleString() }}
+              </span>
+              <span v-else class="text-gray-400 italic">
+                Never
+              </span>
+            </TableCell>
+
             <TableCell class="text-right">
               <Button
                 variant="destructive"
