@@ -276,7 +276,10 @@ onUnmounted(() => {
       </Dialog>
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-2 sm:grid-cols-2">
+    <div
+      v-if="agentStore.page?.totalElements > 0"
+      class="grid gap-6 lg:grid-cols-2 sm:grid-cols-2"
+    >
       <Card
         v-for="agent in agentStore.agents"
         :key="agent.id"
@@ -329,7 +332,20 @@ onUnmounted(() => {
         </CardContent>
       </Card>
     </div>
-
+    <div v-else class="items-center justify-center pt-10 text-center">
+      <Icon
+        name="lucide:bot"
+        class="h-10 w-10 text-muted-foreground"
+      />
+      <div>
+        <h2 class="text-xl font-semibold">
+          No result found
+        </h2>
+        <p class="text-sm text-muted-foreground">
+          Click on the Create Agent button to set up our first agent
+        </p>
+      </div>
+    </div>
     <div v-if="isLoadingMore" class="my-4 flex justify-center">
       <svg class="h-6 w-6 animate-spin text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
