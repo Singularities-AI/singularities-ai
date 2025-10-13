@@ -11,7 +11,8 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AnalyticsStatsResponseDto {
 
-    private long users;
+    private long usersRegister;
+    private long usersLogin;
     private long chats;
     private long messages;
 }

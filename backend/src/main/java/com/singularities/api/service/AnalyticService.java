@@ -21,12 +21,14 @@ public class AnalyticService {
 
     public AnalyticsStatsResponseDto getStatsByDateRangeStats(LocalDateTime startDate, LocalDateTime endDate) {
 
-        long userCount = userRepository.count();
-        long chatsCount = chatRepository.count();
-        long messagesCount = messageRepository.count();
+        long userRegisterCount = userRepository.countByCreationDateBetween(startDate, endDate);
+        long userLoginCount = userRepository.countByLastLoginBetween(startDate, endDate);
+        long chatsCount = chatRepository.countByLastUpdateBetween(startDate, endDate);
+        long messagesCount = messageRepository.countByLastUpdateBetween(startDate, endDate);
 
         return new AnalyticsStatsResponseDto(
-                userCount,
+                userRegisterCount,
+                userLoginCount,
                 chatsCount,
                 messagesCount
         );

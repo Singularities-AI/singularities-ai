@@ -1,10 +1,88 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { endOfDay, startOfDay, startOfYear, subDays } from 'date-fns'
+import { useAnalyticStore } from '../../stores/analytic'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
-onMounted(async () => {
+const analyticStore = useAnalyticStore()
 
+const selectedDateRange = ref<'week' | 'month' | 'year' | 'custom'>('month')
+const dateRange = ref<{ from: Date, to: Date } | null>(null)
+
+function formatToISOString(date: Date): string {
+  return date.toISOString()
+}
+
+const dateFilter = computed(() => {
+  if (selectedDateRange.value === 'custom' && dateRange.value) {
+    return {
+      start: formatToISOString(dateRange.value.from),
+      end: formatToISOString(dateRange.value.to),
+    }
+  }
+
+  const now = new Date()
+  let start: Date
+  let end: Date
+
+  switch (selectedDateRange.value) {
+    case 'week':
+      start = startOfDay(subDays(now, 6))
+      end = endOfDay(now)
+      break
+    case 'month':
+      start = startOfDay(subDays(now, 29))
+      end = endOfDay(now)
+      break
+    case 'year':
+      start = startOfDay(startOfYear(now))
+      end = endOfDay(now)
+      break
+    default:
+      start = startOfDay(subDays(now, 6))
+      end = endOfDay(now)
+  }
+
+  return {
+    start: formatToISOString(start),
+    end: formatToISOString(end),
+  }
+})
+
+const statsCards = computed(() => [
+  {
+    id: 'users-signup',
+    title: 'Users Signup',
+    icon: 'lucide:user-round-plus',
+    value: analyticStore.stats.usersRegister,
+  },
+  {
+    id: 'users-signin',
+    title: 'Users Signin',
+    icon: 'lucide:user-round-check',
+    value: analyticStore.stats.usersLogin,
+  },
+  {
+    id: 'total-chats',
+    title: 'Total Chats',
+    icon: 'lucide:square-terminal',
+    value: analyticStore.stats.chats,
+  },
+  {
+    id: 'total-messages',
+    title: 'Total Messages',
+    icon: 'lucide:message-square-text',
+    value: analyticStore.stats.messages,
+  },
+])
+
+watch([dateFilter], () => {
+  analyticStore.getStats(dateFilter.value)
+})
+
+onMounted(async () => {
+  analyticStore.getStats(dateFilter.value)
 })
 </script>
 
@@ -13,115 +91,45 @@ onMounted(async () => {
     <div class="relative flex flex-col gap-4">
       <div class="flex items-center justify-between">
         <h1 class="text-xl font-semibold">
-          Analytics | {{ new Date().toLocaleString() }}
+          Analytics
         </h1>
+        <!-- date filter -->
+        <div class="flex items-center gap-4">
+          <Tabs v-model="selectedDateRange">
+            <TabsList>
+              <TabsTrigger value="week">
+                Last 7 days
+              </TabsTrigger>
+              <TabsTrigger value="month">
+                Last 30 days
+              </TabsTrigger>
+              <TabsTrigger value="year">
+                Current year
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
 
-      <div class="grid gap-4 lg:grid-cols-4 md:grid-cols-2">
-        <Card>
+      <section class="grid gap-4 lg:grid-cols-4 md:grid-cols-2">
+        <Card
+          v-for="stat in statsCards"
+          :key="stat.id"
+        >
           <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle class="text-sm font-medium">
-              Total Message
+              {{ stat.title }}
             </CardTitle>
-            <Icon name="lucide:settings" class="size-5" />
+            <Icon :name="stat.icon" class="size-5 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div class="text-2xl font-bold">
-              $45,231.89
-            </div>
-            <p class="text-xs text-muted-foreground">
-              +20.1% from last month
-            </p>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle class="text-sm font-medium">
-              Subscriptions
-            </CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              class="h-4 w-4 text-muted-foreground"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-          </CardHeader>
           <CardContent>
-            <div class="text-2xl font-bold">
-              +2350
-            </div>
-            <p class="text-xs text-muted-foreground">
-              +180.1% from last month
+            <p class="text-2xl font-bold">
+              {{ stat.value }}
             </p>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle class="text-sm font-medium">
-              Sales
-            </CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              class="h-4 w-4 text-muted-foreground"
-            >
-              <rect width="20" height="14" x="2" y="5" rx="2" />
-              <path d="M2 10h20" />
-            </svg>
-          </CardHeader>
-          <CardContent>
-            <div class="text-2xl font-bold">
-              +12,234
-            </div>
-            <p class="text-xs text-muted-foreground">
-              +19% from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle class="text-sm font-medium">
-              Active Now
-            </CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              class="h-4 w-4 text-muted-foreground"
-            >
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
-          </CardHeader>
-          <CardContent>
-            <div class="text-2xl font-bold">
-              +573
-            </div>
-            <p class="text-xs text-muted-foreground">
-              +201 since last hour
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      </section>
     </div>
   </main>
 </template>

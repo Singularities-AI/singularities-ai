@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Model } from '~/interfaces/Model'
+import type { Model } from '../interfaces/Model'
 
 export const useModelStore = defineStore('model', {
   state: () => ({

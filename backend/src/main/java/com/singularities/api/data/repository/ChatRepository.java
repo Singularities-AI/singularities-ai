@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface ChatRepository extends JpaRepository<ChatModel, UUID> {
@@ -20,4 +21,6 @@ public interface ChatRepository extends JpaRepository<ChatModel, UUID> {
     @Modifying
     @Query("UPDATE ChatModel c SET c.agent = null WHERE c.agent.id = :agentId")
     void unlinkAllChatByAgentId(@Param("agentId") UUID agentId);
+
+    long countByLastUpdateBetween(LocalDateTime startDate, LocalDateTime endDate);
 }
