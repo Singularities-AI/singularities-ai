@@ -6,8 +6,8 @@ interface Item {
 
 const sidebarNavItems: Item[] = [
   {
-    title: 'Analytics (soon)',
-    href: '#',
+    title: 'Analytics',
+    href: '/admin/analytics',
   },
   {
     title: 'Benchmark (soon)',

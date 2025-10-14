@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface MessageRepository extends JpaRepository<MessageModel, UUID> {
@@ -14,4 +15,6 @@ public interface MessageRepository extends JpaRepository<MessageModel, UUID> {
     @Modifying
     @Query("DELETE FROM MessageModel m WHERE m.chat.user = :user")
     void deleteAllByUser(@Param("user") UserModel user);
+
+    long countByLastUpdateBetween(LocalDateTime startDate, LocalDateTime endDate);
 }
