@@ -1,6 +1,6 @@
 package com.singularities.api.controller;
 
-import com.singularities.api.dto.response.AnalyticsStatsResponseDto;
+import com.singularities.api.dto.response.AnalyticStatsResponseDto;
 import com.singularities.api.service.AnalyticService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @RequestMapping("/web/analytics")
 @CrossOrigin(origins = "*", maxAge = 3600)
-public class AnalyticsController {
+public class AnalyticController {
 
     private final AnalyticService analyticService;
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
-    public AnalyticsStatsResponseDto getStats(
+    public AnalyticStatsResponseDto getStats(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end
     ) {

@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AnalyticsStatsResponseDto {
+public class AnalyticStatsResponseDto {
 
     private long usersRegister;
     private long usersLogin;
