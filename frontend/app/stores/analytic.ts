@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Statistics } from '../interfaces/Statistics'
+import type { AnalyticStats } from '../interfaces/AnalyticStats'
 
 interface DateFilter {
   start: string
@@ -8,7 +8,7 @@ interface DateFilter {
 
 export const useAnalyticStore = defineStore('model', {
   state: () => ({
-    stats: {} as Statistics,
+    stats: {} as AnalyticStats,
   }),
 
   actions: {
