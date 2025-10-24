@@ -4,6 +4,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { useAuthStore } from '~/stores/auth'
+import { toast } from '@/composables/useToast'
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
 
@@ -17,7 +18,7 @@ const loginFormSchema = toTypedSchema(
   z.object({
     email: z
       .string()
-      .email({ message: 'Please enter a valid email address.' }),
+      .email({ message: t('emailValidationMessage') }),
   }),
 )
 
@@ -34,7 +35,7 @@ async function onSubmit(values: { email: string }) {
   }
   else {
     toast({
-      title: 'Error',
+      title: t('errorTitle'),
       description: message,
     })
   }
@@ -49,7 +50,7 @@ async function onSubmit(values: { email: string }) {
       <a href="/" class="flex items-center space-x-3">
         <img src="/favicon.ico" class="h-10 w-10">
         <span class="text-xl" style="font-family: 'Space Mono', monospace;">
-          Singularities AI
+          {{ t('title') }}
         </span>
       </a>
     </div>
@@ -58,19 +59,19 @@ async function onSubmit(values: { email: string }) {
       <Form :validation-schema="loginFormSchema" class="grid mx-auto w-[350px] gap-6" @submit="onSubmit">
         <div class="grid gap-2 text-center">
           <h1 class="mb-2 text-3xl" style="font-family: 'Space Mono', monospace;">
-            Sign up to initiate your singularity.
+            {{ t('signupMessage') }}
           </h1>
           <p class="text-balance text-muted-foreground">
-            A login code will be sent to you by email.
+            {{ t('loginCodeMessage') }}
           </p>
         </div>
 
         <div class="grid gap-4">
           <FormField v-slot="{ componentField }" name="email">
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{{ t('emailLabel') }}</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="john@example.com" v-bind="componentField" />
+                <Input type="email" :placeholder="t('emailPlaceholder')" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -86,10 +87,10 @@ async function onSubmit(values: { email: string }) {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
               />
             </svg>
-            Loading...
+            {{ t('loadingMessage') }}
           </template>
           <template v-else>
-            Continue with email
+            {{ t('continueButton') }}
           </template>
         </Button>
       </Form>

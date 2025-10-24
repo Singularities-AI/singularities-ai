@@ -2,6 +2,7 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "types": ["node", "@playwright/test"],
+
     "skipLibCheck": true
   },
   "include": ["playwright.config.ts", "tests/**/*.ts"],

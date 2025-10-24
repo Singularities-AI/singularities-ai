@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import type { MDCParserResult } from '@nuxtjs/mdc'
 import Header from '~/components/Header.vue'
 import Sidebar from '~/components/Sidebar.vue'
 import MDCContent from '~/components/MDCContent.vue'
 import { useModelStore } from '~/stores/model'
 import { useChatStore } from '~/stores/chat'
+import { useAgentStore } from '~/stores/agent'
 import type { Agent } from '~/interfaces/Agent'
+
+const { t } = useI18n()
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
 
@@ -155,7 +158,7 @@ function newChat() {
           <div class="flex-1 overflow-auto pb-4">
             <fieldset class="h-full flex flex-col gap-4 border rounded-lg p-4">
               <legend class="ml-1 text-sm font-medium">
-                Chats
+                {{ t('chats') }}
               </legend>
 
               <div class="max-h-[calc(100vh-400px)] flex flex-col gap-1 overflow-y-auto scroll-smooth">
@@ -170,7 +173,7 @@ function newChat() {
                       class="flex items-center gap-2"
                     >
                       <Icon name="lucide:square-pen" class="size-4" />
-                      <span class="truncate text-sm text-black">New chat</span>
+                      <span class="truncate text-sm text-black">{{ t('newChat') }}</span>
                     </Button>
                   </div>
                 </div>
@@ -202,7 +205,7 @@ function newChat() {
                         @click="deleteChat(item.id)"
                       >
                         <Icon name="lucide:trash" class="mr-2 size-4" />
-                        Delete
+                        {{ t('delete') }}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -217,13 +220,13 @@ function newChat() {
           <div class="sticky bottom-0 z-10 bg-background">
             <fieldset class="grid gap-6 border rounded-lg p-4">
               <legend class="px-1 text-sm font-medium -ml-1">
-                Settings
+                {{ t('settings') }}
               </legend>
               <div class="grid gap-3">
-                <Label for="model">Model</Label>
+                <Label for="model">{{ t('model') }}</Label>
                 <Select v-model="selectedModel">
                   <SelectTrigger id="model" class="items-start [&_[data-description]]:hidden">
-                    <SelectValue placeholder="Select a model" />
+                    <SelectValue :placeholder="t('selectModel')" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem
@@ -241,11 +244,11 @@ function newChat() {
                 </Select>
 
                 <div class="grid mt-3 gap-3">
-                  <Label for="content">Context</Label>
+                  <Label for="content">{{ t('context') }}</Label>
                   <Textarea
                     id="content"
                     v-model="context"
-                    placeholder="You are a..."
+                    :placeholder="t('contextPlaceholder')"
                     class="min-h-[5.5rem]"
                   />
                 </div>
@@ -291,7 +294,7 @@ function newChat() {
                 {{ agent?.name }}
               </span>
               <span v-else class="text-sm font-medium">
-                Basic Chat
+                {{ t('basicChat') }}
               </span>
             </Badge>
 
@@ -308,10 +311,10 @@ function newChat() {
                 <template v-if="msg.from === 'ERROR'">
                   <div class="mx-3 w-full flex items-center justify-between">
                     <div class="text-sm">
-                      An error has occurred. Please try again.
+                      {{ t('errorOccurred') }}
                     </div>
                     <Button variant="secondary" size="sm" class="mr-3 flex items-center gap-2" @click="msg.retry?.()">
-                      Retry <Icon name="lucide:refresh-ccw" class="size-4" />
+                      {{ t('retry') }} <Icon name="lucide:refresh-ccw" class="size-4" />
                     </Button>
                   </div>
                 </template>
@@ -332,7 +335,7 @@ function newChat() {
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Generating your response...
+                  {{ t('generatingResponse') }}
                 </div>
               </div>
             </div>
@@ -340,22 +343,22 @@ function newChat() {
 
           <!-- input -->
           <form class="relative overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring" @submit.prevent="sendMessage">
-            <Label for="message" class="sr-only">Message</Label>
-            <Textarea id="message" v-model="inputMessage" placeholder="Type your message here..." class="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0" />
+            <Label for="message" class="sr-only">{{ t('message') }}</Label>
+            <Textarea id="message" v-model="inputMessage" :placeholder="t('typeMessageHere')" class="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0" />
             <div class="flex items-center p-3 pt-0">
               <Tooltip>
                 <TooltipTrigger as-child>
                   <Button variant="ghost" size="icon">
                     <Icon name="lucide:paperclip" class="size-4" />
-                    <span class="sr-only">Attach file</span>
+                    <span class="sr-only">{{ t('attachFile') }}</span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top" class="bg-black">
-                  Attach File (Coming soon)
+                  {{ t('attachFileComingSoon') }}
                 </TooltipContent>
               </Tooltip>
               <Button type="submit" size="sm" class="ml-auto gap-1.5 bg-black">
-                Send Message <Icon name="lucide:corner-down-left" class="size-3.5" />
+                {{ t('sendMessage') }} <Icon name="lucide:corner-down-left" class="size-3.5" />
               </Button>
             </div>
           </form>

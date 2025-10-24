@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { User } from '~/interfaces/User'
 import { useAuthStore } from '~/stores/auth'
+import { toast } from '@/composables/useToast'
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 const initialValues = ref({
@@ -37,14 +40,14 @@ async function onSubmit() {
 
   if (success) {
     toast({
-      title: 'Success',
-      description: 'Context updated successfully.',
+      title: t('successTitle'),
+      description: t('successMessage'),
     })
     initialContext.value = initialValues.value.context
   }
   else {
     toast({
-      title: 'Error',
+      title: t('errorTitle'),
       description: response || 'Something went wrong.',
     })
   }
@@ -56,10 +59,10 @@ async function onSubmit() {
 <template>
   <div>
     <h3 class="text-lg font-medium">
-      Account
+      {{ t('accountTitle') }}
     </h3>
     <p class="text-sm text-muted-foreground">
-      Update your account settings.
+      {{ t('accountDescription') }}
     </p>
   </div>
 
@@ -71,9 +74,9 @@ async function onSubmit() {
   >
     <FormField name="email">
       <FormItem>
-        <FormLabel>Email</FormLabel>
+        <FormLabel>{{ t('emailLabel') }}</FormLabel>
         <FormControl>
-          <Input v-model="initialValues.email" placeholder="Your email" disabled type="email" />
+          <Input v-model="initialValues.email" :placeholder="t('accountEmailPlaceholder')" disabled type="email" />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -81,9 +84,9 @@ async function onSubmit() {
 
     <FormField name="context">
       <FormItem>
-        <FormLabel>Context</FormLabel>
+        <FormLabel>{{ t('context') }}</FormLabel>
         <FormControl>
-          <Textarea v-model="initialValues.context" placeholder="You are a..." class="min-h-[9.5rem]" />
+          <Textarea v-model="initialValues.context" :placeholder="t('contextPlaceholder')" class="min-h-[9.5rem]" />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -100,10 +103,10 @@ async function onSubmit() {
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          Loading..
+          {{ t('loadingButton') }}
         </template>
         <template v-else>
-          Save changes
+          {{ t('saveChanges') }}
         </template>
       </Button>
     </div>
@@ -112,15 +115,15 @@ async function onSubmit() {
       <FormItem class="flex flex-row items-center justify-between border rounded-lg p-4">
         <div class="space-y-0.5">
           <FormLabel class="text-base">
-            Delete my account
+            {{ t('deleteAccountLabel') }}
           </FormLabel>
           <FormDescription>
-            Contact us to delete your account.
+            {{ t('deleteAccountDescription') }}
           </FormDescription>
         </div>
         <a href="mailto:contact@singularities-ai.com">
           <Button type="button" class="red-button">
-            Contact us
+            {{ t('contactUs') }}
           </Button>
         </a>
       </FormItem>
