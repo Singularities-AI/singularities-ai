@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 interface Item {
   title: string
   href: string
@@ -6,11 +8,11 @@ interface Item {
 
 const sidebarNavItems: Item[] = [
   {
-    title: 'Account',
+    title: t('sidebarNav.account'),
     href: '/account',
   },
   {
-    title: 'Log out',
+    title: t('sidebarNav.logout'),
     href: '/logout',
   },
 ]

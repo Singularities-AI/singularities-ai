@@ -129,5 +129,27 @@
     "domainDeleted": "Domaine \"{domain}\" supprimé avec succès.",
     "unableToDeleteDomain": "Impossible de supprimer le domaine \"{domain}\".",
     "unableToCreateDomain": "Impossible de créer ce domaine."
+  },
+  "sidebarNav": {
+    "account": "Compte",
+    "logout": "Se déconnecter"
+  },
+  "adminSidebar": {
+    "analytics": "Analytique",
+    "benchmark": "Benchmark (bientôt)",
+    "users": "Utilisateurs",
+    "profiles": "Profils (bientôt)",
+    "models": "Modèles",
+    "agents": "Agents",
+    "knowledgeBases": "Bases de connaissances (bientôt)",
+    "supports": "Prise en charge (bientôt)"
+  },
+  "sidebar": {
+    "chats": "Conversations",
+    "agents": "Agents",
+    "knowledgeBases": "Bases de connaissances (Bientôt disponible)",
+    "help": "Aide (Bientôt disponible)",
+    "configuration": "Configuration",
+    "account": "Compte"
   }
 }

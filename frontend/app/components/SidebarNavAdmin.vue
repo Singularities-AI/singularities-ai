@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import { cn } from '@/utils'
+
+const { t } = useI18n()
+
 interface Item {
   title: string
   href: string
@@ -6,11 +11,11 @@ interface Item {
 
 const sidebarNavItems: Item[] = [
   {
-    title: 'Analytics',
+    title: t('adminSidebar.analytics'),
     href: '/admin/analytics',
   },
   {
-    title: 'Benchmark (soon)',
+    title: t('adminSidebar.benchmark'),
     href: '#',
   },
   {
@@ -18,27 +23,27 @@ const sidebarNavItems: Item[] = [
     href: '#',
   },
   {
-    title: 'Users',
+    title: t('adminSidebar.users'),
     href: '/admin/users',
   },
   {
-    title: 'Profils (soon)',
+    title: t('adminSidebar.profiles'),
     href: '#',
   },
   {
-    title: 'Models',
+    title: t('adminSidebar.models'),
     href: '/admin/models',
   },
   {
-    title: 'Agents',
+    title: t('adminSidebar.agents'),
     href: '/admin/agents',
   },
   {
-    title: 'Knownledge bases (soon)',
+    title: t('adminSidebar.knowledgeBases'),
     href: '#',
   },
   {
-    title: 'Supports (soon)',
+    title: t('adminSidebar.supports'),
     href: '#',
   },
 ]

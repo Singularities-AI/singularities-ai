@@ -129,5 +129,27 @@
     "domainDeleted": "Domain \"{domain}\" deleted successfully.",
     "unableToDeleteDomain": "Unable to delete domain \"{domain}\".",
     "unableToCreateDomain": "Unable to create this domain."
+  },
+  "sidebarNav": {
+    "account": "Account",
+    "logout": "Log out"
+  },
+  "adminSidebar": {
+    "analytics": "Analytics",
+    "benchmark": "Benchmark (soon)",
+    "users": "Users",
+    "profiles": "Profiles (soon)",
+    "models": "Models",
+    "agents": "Agents",
+    "knowledgeBases": "Knowledge bases (soon)",
+    "supports": "Supports (soon)"
+  },
+  "sidebar": {
+    "chats": "Chats",
+    "agents": "Agents",
+    "knowledgeBases": "Knowledge bases (Coming soon)",
+    "help": "Help (Coming soon)",
+    "configuration": "Configuration",
+    "account": "Account"
   }
 }

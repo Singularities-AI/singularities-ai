@@ -2,6 +2,7 @@
 const router = useRouter()
 const auth = useAuthStore()
 const route = useRoute()
+const { t } = useI18n()
 
 const isActive = (path: string): boolean => route.path.startsWith(path)
 </script>
@@ -25,7 +26,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right" :side-offset="5" class="bg-black">
-          Chats
+          {{ t('sidebar.chats') }}
         </TooltipContent>
       </Tooltip>
 
@@ -40,7 +41,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right" :side-offset="5" class="bg-black">
-          Agents
+          {{ t('sidebar.agents') }}
         </TooltipContent>
       </Tooltip>
 
@@ -51,7 +52,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right" :side-offset="5" class="bg-black">
-          Knowledge bases (Coming soon)
+          {{ t('sidebar.knowledgeBases') }}
         </TooltipContent>
       </Tooltip>
     </nav>
@@ -64,7 +65,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right" :side-offset="5" class="bg-black">
-          Help (Coming soon)
+          {{ t('sidebar.help') }}
         </TooltipContent>
       </Tooltip>
 
@@ -78,7 +79,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right" :side-offset="5" class="bg-black">
-          Configuration
+          {{ t('sidebar.configuration') }}
         </TooltipContent>
       </Tooltip>
 
@@ -89,7 +90,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right" :side-offset="5" class="bg-black">
-          Account
+          {{ t('sidebar.account') }}
         </TooltipContent>
       </Tooltip>
     </nav>
