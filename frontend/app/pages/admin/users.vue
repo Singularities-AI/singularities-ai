@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { z } from 'zod'
+import { useI18n } from 'vue-i18n'
+import { useUserStore } from '~/stores/user'
+import { useSettingStore } from '~/stores/setting'
+import { toast } from '@/composables/useToast'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrev } from '@/components/ui/pagination'
@@ -8,6 +12,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+
+const { t } = useI18n()
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
@@ -61,15 +67,15 @@ async function confirmDelete() {
   const { success, message } = await userStore.remove(userToDelete.value)
   if (!success) {
     toast({
-      title: 'Error',
-      description: message || 'Unable to delete this user.',
+      title: t('adminUsers.error'),
+      description: message || t('adminUsers.unableToDeleteUser'),
       variant: 'destructive',
     })
   }
   else {
     toast({
-      title: 'Deleted',
-      description: 'User deleted successfully.',
+      title: t('adminUsers.deleted'),
+      description: t('adminUsers.userDeleted'),
     })
     await loadPage(currentPage.value)
   }
@@ -89,8 +95,8 @@ async function saveDomain() {
   const existingDomains = settingStore.settings.AUTH_AUTHORIZED_DOMAIN || []
   if (existingDomains.includes(newDomain.value)) {
     toast({
-      title: 'Error',
-      description: 'This domain already exists.',
+      title: t('adminUsers.error'),
+      description: t('adminUsers.domainExists'),
       variant: 'destructive',
     })
     return
@@ -101,8 +107,8 @@ async function saveDomain() {
 
   if (!success) {
     toast({
-      title: 'Error',
-      description: message || 'Unable to create this domain.',
+      title: t('adminUsers.error'),
+      description: message || t('adminUsers.unableToCreateDomain'),
       variant: 'destructive',
     })
   }
@@ -112,14 +118,14 @@ async function removeDomain(domain: string) {
   try {
     await settingStore.removeValue('AUTH_AUTHORIZED_DOMAIN', domain)
     toast({
-      title: 'Deleted',
-      description: `Domain "${domain}" deleted successfully.`,
+      title: t('adminUsers.deleted'),
+      description: t('adminUsers.domainDeleted', { domain }),
     })
   }
   catch (error: any) {
     toast({
-      title: 'Error',
-      description: error.message || `Unable to delete domain "${domain}".`,
+      title: t('adminUsers.error'),
+      description: error.message || t('adminUsers.unableToDeleteDomain', { domain }),
       variant: 'destructive',
     })
   }
@@ -131,20 +137,20 @@ async function removeDomain(domain: string) {
     <div class="relative flex flex-col gap-4">
       <div class="flex items-center justify-between">
         <h1 class="text-xl font-semibold">
-          Users | {{ userStore.page?.totalElements || 0 }}
+          {{ t('adminUsers.title') }} | {{ userStore.page?.totalElements || 0 }}
         </h1>
 
         <Dialog v-model:open="showDomainDialog">
           <DialogTrigger as-child>
             <Button variant="outline">
               <Icon name="lucide:plus" class="mr-2 size-5" />
-              Authorized Domains
+              {{ t('adminUsers.authorizedDomains') }}
             </Button>
           </DialogTrigger>
           <DialogContent class="max-w-lg">
             <DialogHeader>
-              <DialogTitle>Authorized Domains</DialogTitle>
-              Authorized domains restrict the registration of new users to specific email addresses (e.g., @domain.com). To allow all domains, simply leave the list empty.
+              <DialogTitle>{{ t('adminUsers.authorizedDomains') }}</DialogTitle>
+              {{ t('adminUsers.domainDescription') }}
             </DialogHeader>
 
             <!-- Authorized domains -->
@@ -160,16 +166,16 @@ async function removeDomain(domain: string) {
                   variant="ghost" size="sm" @click="removeDomain(domain)"
                 >
                   <Icon name="lucide:trash" class="mr-1 size-4" />
-                  Delete
+                  {{ t('adminUsers.deleteDomain') }}
                 </Button>
               </div>
             </div>
 
             <div class="mt-4 flex flex-col gap-1">
               <div class="flex gap-2">
-                <Input v-model="newDomain" placeholder="example.com" />
+                <Input v-model="newDomain" :placeholder="t('adminUsers.domainError')" />
                 <Button class="text-black" @click="saveDomain">
-                  <Icon name="lucide:plus" class="mr-2 size-5" />Add
+                  <Icon name="lucide:plus" class="mr-2 size-5" />{{ t('adminUsers.addDomain') }}
                 </Button>
               </div>
               <p v-if="domainError" class="text-sm text-red-500">
@@ -184,12 +190,12 @@ async function removeDomain(domain: string) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>UUID</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Roles</TableHead>
-            <TableHead>Last Login</TableHead>
+            <TableHead>{{ t('adminUsers.uuid') }}</TableHead>
+            <TableHead>{{ t('adminUsers.email') }}</TableHead>
+            <TableHead>{{ t('adminUsers.roles') }}</TableHead>
+            <TableHead>{{ t('adminUsers.lastLogin') }}</TableHead>
             <TableHead class="text-right">
-              Actions
+              {{ t('adminUsers.actions') }}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -212,7 +218,7 @@ async function removeDomain(domain: string) {
               </template>
               <template v-else>
                 <Badge variant="outline" class="p-1 text-gray-400 italic">
-                  No roles
+                  {{ t('adminUsers.noRoles') }}
                 </Badge>
               </template>
             </TableCell>
@@ -222,7 +228,7 @@ async function removeDomain(domain: string) {
                 {{ new Date(user.lastLogin).toLocaleString() }}
               </span>
               <span v-else class="text-gray-400 italic">
-                Never
+                {{ t('adminUsers.never') }}
               </span>
             </TableCell>
 
@@ -234,7 +240,7 @@ async function removeDomain(domain: string) {
                 @click="() => { userToDelete = user.id; showDeleteDialog = true }"
               >
                 <Icon name="lucide:trash" class="mr-2 size-4" />
-                Delete
+                {{ t('adminUsers.deleteUser') }}
               </Button>
             </TableCell>
           </TableRow>
@@ -270,18 +276,18 @@ async function removeDomain(domain: string) {
   <AlertDialog v-model:open="showDeleteDialog">
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Confirm deletion</AlertDialogTitle>
+        <AlertDialogTitle>{{ t('adminUsers.confirmDelete') }}</AlertDialogTitle>
         <AlertDialogDescription>
-          Are you sure you want to delete this user and all this data? This action cannot be undone.
+          {{ t('adminUsers.deleteUserDescription') }}
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel @click="showDeleteDialog = false">
-          Cancel
+          {{ t('adminUsers.cancel') }}
         </AlertDialogCancel>
         <AlertDialogAction class="border bg-red-100 text-red-500 hover:cursor-pointer" @click="confirmDelete">
           <Icon name="lucide:trash" class="mr-2 size-4" />
-          Yes, delete
+          {{ t('adminUsers.yesDelete') }}
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useModelStore } from '~/stores/model'
+import { toast } from '@/composables/useToast'
+
+const { t } = useI18n()
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
@@ -14,15 +18,15 @@ async function setAsDefault(uuid: string) {
   const { success, message } = await modelStore.setDefault(uuid)
   if (!success) {
     toast({
-      title: 'Error',
-      description: message || 'Unable to set this model as default.',
+      title: t('adminModels.error'),
+      description: message || t('adminModels.unableSetDefault'),
       variant: 'destructive',
     })
   }
   else {
     toast({
-      title: 'Success',
-      description: 'Model defined as default.',
+      title: t('adminModels.success'),
+      description: t('adminModels.modelSetDefault'),
     })
   }
 }
@@ -31,15 +35,15 @@ async function download(uuid: string) {
   const { success, message } = await modelStore.download(uuid)
   if (!success) {
     toast({
-      title: 'Error',
-      description: message || 'Unable to download this model.',
+      title: t('adminModels.error'),
+      description: message || t('adminModels.unableToDownload'),
       variant: 'destructive',
     })
   }
   else {
     toast({
-      title: 'Success',
-      description: 'Download started successfully.',
+      title: t('adminModels.success'),
+      description: t('adminModels.downloadStarted'),
     })
   }
 }
@@ -48,15 +52,15 @@ async function remove(uuid: string) {
   const { success, message } = await modelStore.delete(uuid)
   if (!success) {
     toast({
-      title: 'Error',
-      description: message || 'Unable to delete this model.',
+      title: t('adminModels.error'),
+      description: message || t('adminModels.unableToDeleteModel'),
       variant: 'destructive',
     })
   }
   else {
     toast({
-      title: 'Deleted',
-      description: 'Model deleted successfully.',
+      title: t('adminModels.deleted'),
+      description: t('adminModels.modelDeleted'),
     })
   }
 }
@@ -66,7 +70,7 @@ async function remove(uuid: string) {
   <main class="grid flex-1 gap-4 overflow-auto p-4 lg:grid-cols-2">
     <div class="relative flex flex-col gap-4">
       <h1 class="text-xl font-semibold">
-        Models | {{ modelStore.models?.length || 0 }}
+        {{ t('adminModels.title') }} | {{ modelStore.models?.length || 0 }}
       </h1>
 
       <div
@@ -100,7 +104,7 @@ async function remove(uuid: string) {
                 disabled
               >
                 <Icon name="lucide:loader-2" class="mr-2 size-5 animate-spin" />
-                Downloading...
+                {{ t('adminModels.downloading') }}
               </Button>
 
               <template v-else>
@@ -111,7 +115,7 @@ async function remove(uuid: string) {
                   @click="download(model.id)"
                 >
                   <Icon name="lucide:download" class="mr-2 size-5" />
-                  Download
+                  {{ t('adminModels.download') }}
                 </Button>
 
                 <Button
@@ -123,7 +127,7 @@ async function remove(uuid: string) {
                   @click="remove(model.id)"
                 >
                   <Icon name="lucide:trash" class="mr-2 size-5" />
-                  Delete
+                  {{ t('adminModels.delete') }}
                 </Button>
               </template>
             </div>
@@ -138,7 +142,7 @@ async function remove(uuid: string) {
               @click="setAsDefault(model.id)"
             >
               <Icon name="lucide:star" class="mr-2 size-5" />
-              Set as default
+              {{ t('adminModels.setAsDefault') }}
             </Button>
 
             <!-- Default (tooltip) -->
@@ -152,12 +156,12 @@ async function remove(uuid: string) {
                   disabled
                 >
                   <Icon name="lucide:star" class="mr-2 size-5" />
-                  Default
+                  {{ t('adminModels.default') }}
                 </Button>
               </TooltipTrigger>
               <TooltipContent class="bg-black">
                 <p class="text-white">
-                  Select another model to change the default one
+                  {{ t('adminModels.defaultTooltip') }}
                 </p>
               </TooltipContent>
             </Tooltip>

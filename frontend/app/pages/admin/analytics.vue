@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { endOfDay, startOfDay, startOfYear, subDays } from 'date-fns'
+import { useI18n } from 'vue-i18n'
 import { useAnalyticStore } from '../../stores/analytic'
+
+const { t } = useI18n()
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
@@ -53,25 +56,25 @@ const dateFilter = computed(() => {
 const statsCards = computed(() => [
   {
     id: 'users-signup',
-    title: 'Users Signup',
+    title: t('adminAnalytics.usersSignup'),
     icon: 'lucide:user-round-plus',
     value: analyticStore.stats.usersRegister,
   },
   {
     id: 'users-signin',
-    title: 'Users Signin',
+    title: t('adminAnalytics.usersSignin'),
     icon: 'lucide:user-round-check',
     value: analyticStore.stats.usersLogin,
   },
   {
     id: 'total-chats',
-    title: 'Total Chats',
+    title: t('adminAnalytics.totalChats'),
     icon: 'lucide:square-terminal',
     value: analyticStore.stats.chats,
   },
   {
     id: 'total-messages',
-    title: 'Total Messages',
+    title: t('adminAnalytics.totalMessages'),
     icon: 'lucide:message-square-text',
     value: analyticStore.stats.messages,
   },
@@ -91,20 +94,20 @@ onMounted(async () => {
     <div class="relative flex flex-col gap-4">
       <div class="flex items-center justify-between">
         <h1 class="text-xl font-semibold">
-          Analytics
+          {{ t('adminAnalytics.title') }}
         </h1>
         <!-- date filter -->
         <div class="flex items-center gap-4">
           <Tabs v-model="selectedDateRange">
             <TabsList>
               <TabsTrigger value="week">
-                Last 7 days
+                {{ t('adminAnalytics.week') }}
               </TabsTrigger>
               <TabsTrigger value="month">
-                Last 30 days
+                {{ t('adminAnalytics.month') }}
               </TabsTrigger>
               <TabsTrigger value="year">
-                Current year
+                {{ t('adminAnalytics.year') }}
               </TabsTrigger>
             </TabsList>
           </Tabs>

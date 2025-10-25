@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import * as z from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
+import { useI18n } from 'vue-i18n'
+import { useAgentStore } from '~/stores/agent'
 import { useModelStore } from '~/stores/model'
+import { toast } from '@/composables/useToast'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
+
+const { t } = useI18n()
 
 const agentStore = useAgentStore()
 const modelStore = useModelStore()
@@ -38,11 +43,11 @@ const agentToEdit = ref<any | null>(null)
 
 const agentFormSchema = toTypedSchema(
   z.object({
-    icon: z.string().min(1, 'Icon is required.').max(254, 'Icon must be at most 254 characters.'),
-    name: z.string().min(10, 'Name must be at least 10 characters.').max(45, 'Name must be at most 45 characters.'),
-    description: z.string().min(30, 'Description must be at least 30 characters.').max(240, 'Description must be at most 240 characters.'),
-    prompt: z.string().min(75, 'Prompt must be at least 75 characters.').max(4000, 'Prompt must be at most 4000 characters.'),
-    modelUUID: z.string().min(1, 'A model must be selected.'),
+    icon: z.string().min(1, t('adminAgents.icon')).max(254, t('adminAgents.icon')),
+    name: z.string().min(10, t('adminAgents.name')).max(45, t('adminAgents.name')),
+    description: z.string().min(30, t('adminAgents.description')).max(240, t('adminAgents.description')),
+    prompt: z.string().min(75, t('adminAgents.prompt')).max(4000, t('adminAgents.prompt')),
+    modelUUID: z.string().min(1, t('adminAgents.model')),
   }),
 )
 
@@ -79,14 +84,14 @@ async function onSubmit(values: typeof emptyForm) {
 
   if (success) {
     toast({
-      title: 'Success',
-      description: isEditing.value ? 'Agent updated successfully.' : 'Agent created successfully.',
+      title: t('adminAgents.success'),
+      description: isEditing.value ? t('adminAgents.agentUpdated') : t('adminAgents.agentCreated'),
     })
   }
   else {
     toast({
-      title: 'Error',
-      description: message || 'Something went wrong.',
+      title: t('adminAgents.error'),
+      description: message || t('adminAgents.somethingWentWrong'),
     })
   }
 
@@ -117,15 +122,15 @@ async function confirmDelete() {
   const { success, message } = await agentStore.delete(agentToDelete.value)
   if (!success) {
     toast({
-      title: 'Error',
-      description: message || 'Unable to delete this agent.',
+      title: t('adminAgents.error'),
+      description: message || t('adminAgents.unableToDelete'),
       variant: 'destructive',
     })
   }
   else {
     toast({
-      title: 'Deleted',
-      description: 'Agent deleted successfully.',
+      title: t('adminAgents.deleted'),
+      description: t('adminAgents.agentDeleted'),
     })
   }
   agentToDelete.value = null
@@ -153,20 +158,20 @@ onUnmounted(() => {
   <div class="relative flex flex-col gap-4">
     <div class="flex items-center justify-between">
       <h1 class="text-xl font-semibold">
-        Agents | {{ agentStore.page?.totalElements || 0 }}
+        {{ t('adminAgents.title') }} | {{ agentStore.agents?.length || 0 }}
       </h1>
 
       <Dialog v-model:open="showCreateAgentDialog">
         <DialogTrigger as-child>
           <Button variant="outline" @click="isEditing = false">
             <Icon name="lucide:bot" class="mr-2 size-5" />
-            Create Agent
+            {{ t('adminAgents.createAgent') }}
           </Button>
         </DialogTrigger>
         <DialogContent class="max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              {{ isEditing ? 'Update Agent' : 'Create Agent' }}
+              {{ isEditing ? t('adminAgents.updateAgent') : t('adminAgents.createAgent') }}
             </DialogTitle>
           </DialogHeader>
 
@@ -177,7 +182,7 @@ onUnmounted(() => {
           >
             <FormField v-slot="{ componentField }" name="icon">
               <FormItem class="flex flex-col">
-                <FormLabel>Icon</FormLabel>
+                <FormLabel>{{ t('adminAgents.icon') }}</FormLabel>
                 <FormControl class="mt-1">
                   <IconPicker v-bind="componentField" />
                 </FormControl>
@@ -187,11 +192,11 @@ onUnmounted(() => {
 
             <FormField v-slot="{ componentField }" name="name">
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{{ t('adminAgents.name') }}</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
-                    placeholder="Ex: Marketing Expert"
+                    :placeholder="t('adminAgents.namePlaceholder')"
                     v-bind="componentField"
                   />
                 </FormControl>
@@ -201,11 +206,11 @@ onUnmounted(() => {
 
             <FormField v-slot="{ componentField }" name="description">
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>{{ t('adminAgents.description') }}</FormLabel>
                 <FormControl>
                   <Textarea
                     class="min-h-[4.5rem]"
-                    placeholder="Ex: An AI agent specializing in marketing strategy and automation, optimizing campaigns and audiences."
+                    :placeholder="t('adminAgents.descriptionPlaceholder')"
                     v-bind="componentField"
                   />
                 </FormControl>
@@ -215,11 +220,11 @@ onUnmounted(() => {
 
             <FormField v-slot="{ componentField }" name="modelUUID">
               <FormItem>
-                <FormLabel>Model</FormLabel>
+                <FormLabel>{{ t('adminAgents.model') }}</FormLabel>
                 <FormControl>
                   <Select v-bind="componentField">
                     <SelectTrigger id="model">
-                      <SelectValue placeholder="Select a model" />
+                      <SelectValue :placeholder="t('adminAgents.selectModel')" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem
@@ -241,11 +246,11 @@ onUnmounted(() => {
 
             <FormField v-slot="{ componentField }" name="prompt">
               <FormItem>
-                <FormLabel>Prompt</FormLabel>
+                <FormLabel>{{ t('adminAgents.prompt') }}</FormLabel>
                 <FormControl>
                   <Textarea
                     class="min-h-[9.5rem]"
-                    placeholder="Ex: You are a marketing expert..."
+                    :placeholder="t('adminAgents.promptPlaceholder')"
                     v-bind="componentField"
                   />
                 </FormControl>
@@ -264,10 +269,10 @@ onUnmounted(() => {
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Saving..
+                  {{ t('adminAgents.saving') }}
                 </template>
                 <template v-else>
-                  {{ isEditing ? 'Update' : 'Save' }}
+                  {{ isEditing ? t('adminAgents.update') : t('adminAgents.save') }}
                 </template>
               </Button>
             </div>
@@ -316,7 +321,7 @@ onUnmounted(() => {
               @click="() => { agentToDelete = agent.id; showDeleteDialog = true }"
             >
               <Icon name="lucide:trash" class="mr-2 size-5" />
-              Delete
+              {{ t('adminAgents.delete') }}
             </Button>
 
             <Button
@@ -326,7 +331,7 @@ onUnmounted(() => {
               @click="editAgent(agent)"
             >
               <Icon name="lucide:pencil" class="mr-2 size-5" />
-              Update
+              {{ t('adminAgents.updateButton') }}
             </Button>
           </div>
         </CardContent>
@@ -339,10 +344,10 @@ onUnmounted(() => {
       />
       <div>
         <h2 class="text-xl font-semibold">
-          No result found
+          {{ t('adminAgents.noResults') }}
         </h2>
         <p class="text-sm text-muted-foreground">
-          Click on the Create Agent button to set up our first agent
+          {{ t('adminAgents.noResultsDescription') }}
         </p>
       </div>
     </div>
@@ -358,20 +363,18 @@ onUnmounted(() => {
   <AlertDialog v-model:open="showDeleteDialog">
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Confirm deletion</AlertDialogTitle>
+        <AlertDialogTitle>{{ t('adminAgents.confirmDeletion') }}</AlertDialogTitle>
         <AlertDialogDescription>
-          Are you sure you want to delete this agent and all this data? This action cannot be undone.
-          <br>
-          All conversations related to this agent will be converted into independent conversations.
+          {{ t('adminAgents.deleteAgentDescription') }}
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel @click="showDeleteDialog = false">
-          Cancel
+          {{ t('adminAgents.cancel') }}
         </AlertDialogCancel>
         <AlertDialogAction class="border bg-red-100 text-red-500 hover:cursor-pointer" @click="confirmDelete">
           <Icon name="lucide:trash" class="mr-2 size-4" />
-          Yes, delete
+          {{ t('adminAgents.yesDelete') }}
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>

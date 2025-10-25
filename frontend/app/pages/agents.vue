@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
 
+const { t } = useI18n()
+
 const router = useRouter()
 const agentStore = useAgentStore()
 
@@ -53,10 +55,10 @@ onMounted(async () => {
       <main class="flex-1 p-6">
         <div class="mb-8 flex flex-col items-center text-center space-y-3">
           <h1 class="text-4xl font-bold">
-            Agents
+            {{ t('agents.title') }}
           </h1>
           <p class="max-w-xl text-muted-foreground">
-            Agents are personalized chatbots that combine specific instructions, additional knowledge bases, and specialized skills.
+            {{ t('agents.description') }}
           </p>
         </div>
 
@@ -95,7 +97,7 @@ onMounted(async () => {
                   class="gap-1.5 bg-black text-white"
                   @click="router.push(`/chats/new?agent=${agent.id}`)"
                 >
-                  Start Chat
+                  {{ t('agents.startChat') }}
                   <Icon name="lucide:send-horizontal" class="size-3.5" />
                 </Button>
               </div>
