@@ -19,6 +19,7 @@ const modelStore = useModelStore()
 const chatStore = useChatStore()
 const agentStore = useAgentStore()
 const parse = useMarkdownParser()
+const localePath = useLocalePath()
 
 const selectedModel = ref<string>('')
 const context = ref<string>('')
@@ -67,6 +68,12 @@ onMounted(async () => {
         agent.value = chat.agent
     }
   }
+  else if (chatUUID === 'new') {
+    // Reset for new chat
+    selectedChatId.value = null
+    messages.value = []
+    agent.value = undefined
+  }
 
   // load agent if agent uuid is present in url
   const agentUUID = route.query.agent as string | undefined
@@ -114,7 +121,7 @@ async function sendMessage() {
 
     if (!selectedChatId.value) {
       selectedChatId.value = res.data?.chatUUID || null
-      router.push(`/chats/${res.data?.chatUUID}`)
+      router.push(localePath(`/chats/${res.data?.chatUUID}`))
       await chatStore.list()
     }
   }
@@ -129,19 +136,19 @@ async function sendMessage() {
 function deleteChat(id: string) {
   if (id === selectedChatId.value) {
     selectedChatId.value = null
-    router.push('/chats/new')
+    router.push(localePath('/chats/new'))
   }
 
   chatStore.remove(id)
 }
 
 function openChat(id: string) {
-  router.push(`/chats/${id}`)
+  router.push(localePath(`/chats/${id}`))
 }
 
 function newChat() {
   selectedChatId.value = null
-  router.push('/chats/new')
+  router.push(localePath('/chats/new'))
 }
 </script>
 

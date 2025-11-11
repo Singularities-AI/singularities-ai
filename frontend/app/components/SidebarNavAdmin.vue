@@ -1,50 +1,54 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { useLocalePath } from '#i18n'
 import { cn } from '@/utils'
 
 const { t } = useI18n()
+const localePath = useLocalePath()
+const route = useRoute()
 
 interface Item {
   title: string
-  href: string
+  to: string
 }
 
 const sidebarNavItems: Item[] = [
   {
     title: t('adminSidebar.analytics'),
-    href: '/admin/analytics',
+    to: localePath('admin-analytics'),
   },
   {
     title: t('adminSidebar.benchmark'),
-    href: '#',
+    to: '#',
   },
   {
     title: '',
-    href: '#',
+    to: '#',
   },
   {
     title: t('adminSidebar.users'),
-    href: '/admin/users',
+    to: localePath('admin-users'),
   },
   {
     title: t('adminSidebar.profiles'),
-    href: '#',
+    to: '#',
   },
   {
     title: t('adminSidebar.models'),
-    href: '/admin/models',
+    to: localePath('admin-models'),
   },
   {
     title: t('adminSidebar.agents'),
-    href: '/admin/agents',
+    to: localePath('admin-agents'),
   },
   {
     title: t('adminSidebar.knowledgeBases'),
-    href: '#',
+    to: '#',
   },
   {
     title: t('adminSidebar.supports'),
-    href: '#',
+    to: '#',
   },
 ]
 </script>
@@ -55,11 +59,11 @@ const sidebarNavItems: Item[] = [
       v-for="item in sidebarNavItems"
       :key="item.title"
       as="a"
-      :href="item.href"
+      :href="item.to"
       variant="ghost"
       :class="cn(
         'w-full text-left justify-start',
-        $route.path === `${item.href}` && 'bg-muted hover:bg-muted',
+        route.path === item.to && 'bg-muted hover:bg-muted',
       )"
     >
       {{ item.title }}

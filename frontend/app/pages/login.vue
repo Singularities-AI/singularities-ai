@@ -3,12 +3,15 @@ import * as z from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '~/stores/auth'
 import { toast } from '@/composables/useToast'
+import { useLocalePath } from '#i18n'
 
 definePageMeta({ layout: 'blank', middleware: 'auth' })
 
 const { t } = useI18n()
+const localePath = useLocalePath()
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -31,7 +34,7 @@ async function onSubmit(values: { email: string }) {
   const { success, message } = await authStore.generateToken(values.email)
 
   if (success) {
-    router.push(`/email-confirmation?email=${encodeURIComponent(values.email)}`)
+    router.push(localePath(`/email-confirmation?email=${encodeURIComponent(values.email)}`))
   }
   else {
     toast({
@@ -47,12 +50,12 @@ async function onSubmit(values: { email: string }) {
 <template>
   <div class="relative w-full lg:grid lg:grid-cols-2">
     <div class="absolute left-6 top-6 z-10">
-      <a href="/" class="flex items-center space-x-3">
+      <NuxtLink :to="localePath('index')" class="flex items-center space-x-3">
         <img src="/favicon.ico" class="h-10 w-10">
         <span class="text-xl" style="font-family: 'Space Mono', monospace;">
           {{ t('title') }}
         </span>
-      </a>
+      </NuxtLink>
     </div>
 
     <div class="flex items-center justify-center py-12">

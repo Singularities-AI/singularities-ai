@@ -6,10 +6,12 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '~/stores/auth'
 import { toast } from '@/composables/useToast'
+import { useLocalePath } from '#i18n'
 
 definePageMeta({ layout: 'blank' })
 
 const { t } = useI18n()
+const localePath = useLocalePath()
 
 const router = useRouter()
 const route = useRoute()
@@ -54,7 +56,7 @@ async function onSubmit(values: { code: string }) {
   const { success, message } = await authStore.validCode(email.value, values.code)
 
   if (success) {
-    router.push('/')
+    router.push(localePath('index'))
   }
   else {
     toast({
@@ -70,10 +72,10 @@ async function onSubmit(values: { code: string }) {
 <template>
   <div class="relative w-full lg:grid lg:grid-cols-2">
     <div class="absolute left-6 top-6 z-10">
-      <a href="/" class="flex items-center space-x-3">
+      <NuxtLink :to="localePath('index')" class="flex items-center space-x-3">
         <img src="/favicon.ico" class="h-10 w-10">
         <span class="text-xl" style="font-family: 'Space Mono', monospace;">Singularities AI</span>
-      </a>
+      </NuxtLink>
     </div>
 
     <div class="flex items-center justify-center py-12">

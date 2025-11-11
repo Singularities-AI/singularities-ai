@@ -10,6 +10,7 @@ definePageMeta({ layout: 'blank', middleware: 'auth' })
 const { t } = useI18n()
 
 const router = useRouter()
+const localePath = useLocalePath()
 const agentStore = useAgentStore()
 
 const pageNumber = ref(0)
@@ -95,7 +96,7 @@ onMounted(async () => {
                 <Button
                   size="sm"
                   class="gap-1.5 bg-black text-white"
-                  @click="router.push(`/chats/new?agent=${agent.id}`)"
+                  @click="router.push(localePath(`/chats/new?agent=${agent.id}`))"
                 >
                   {{ t('agents.startChat') }}
                   <Icon name="lucide:send-horizontal" class="size-3.5" />

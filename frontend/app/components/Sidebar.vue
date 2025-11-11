@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useLocalePath } from '#i18n'
+import { useAuthStore } from '@/stores/auth'
+
 const router = useRouter()
 const auth = useAuthStore()
 const route = useRoute()
 const { t } = useI18n()
+const localePath = useLocalePath()
 
 const isActive = (path: string): boolean => route.path.startsWith(path)
 </script>
@@ -20,7 +26,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
           <Button
             variant="ghost" size="icon" class="rounded-lg"
             :class="[{ 'bg-muted': isActive('/chats') }]"
-            aria-label="Chats" @click="router.push('/')"
+            aria-label="Chats" @click=" router.push(localePath({ name: 'chats-uuid', params: { uuid: 'new' } }))"
           >
             <Icon name="lucide:square-terminal" class="size-5" />
           </Button>
@@ -35,7 +41,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
           <Button
             variant="ghost" size="icon" class="rounded-lg" aria-label="Models"
             :class="[{ 'bg-muted': isActive('/agents') }]"
-            @click="router.push('/agents')"
+            @click="router.push(localePath('agents'))"
           >
             <Icon name="lucide:bot" class="size-5" />
           </Button>
@@ -73,7 +79,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
         <TooltipTrigger as-child>
           <Button
             variant="ghost"
-            size="icon" class="mt-auto rounded-lg" aria-label="Configuration" @click="router.push('/admin/models')"
+            size="icon" class="mt-auto rounded-lg" aria-label="Configuration" @click="router.push(localePath('admin-models'))"
           >
             <Icon name="lucide:settings" class="size-5" />
           </Button>
@@ -85,7 +91,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path)
 
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button variant="ghost" size="icon" class="mt-auto rounded-lg" aria-label="Account" @click="router.push('/account')">
+          <Button variant="ghost" size="icon" class="mt-auto rounded-lg" aria-label="Account" @click="router.push(localePath('account'))">
             <Icon name="lucide:square-user" class="size-5" />
           </Button>
         </TooltipTrigger>

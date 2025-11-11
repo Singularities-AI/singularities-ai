@@ -1,19 +1,26 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { useLocalePath } from '#i18n'
+import { cn } from '@/utils'
+
 const { t } = useI18n()
+const localePath = useLocalePath()
+const route = useRoute()
 
 interface Item {
   title: string
-  href: string
+  to: string
 }
 
 const sidebarNavItems: Item[] = [
   {
     title: t('sidebarNav.account'),
-    href: '/account',
+    to: localePath('account'),
   },
   {
     title: t('sidebarNav.logout'),
-    href: '/logout',
+    to: localePath('logout'),
   },
 ]
 </script>
@@ -24,11 +31,11 @@ const sidebarNavItems: Item[] = [
       v-for="item in sidebarNavItems"
       :key="item.title"
       as="a"
-      :href="item.href"
+      :href="item.to"
       variant="ghost"
       :class="cn(
         'w-full text-left justify-start',
-        $route.path === `${item.href}` && 'bg-muted hover:bg-muted',
+        route.path === item.to && 'bg-muted hover:bg-muted',
       )"
     >
       {{ item.title }}
